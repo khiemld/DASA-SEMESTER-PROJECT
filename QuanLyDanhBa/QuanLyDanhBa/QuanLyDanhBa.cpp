@@ -11,6 +11,8 @@ struct CONTACT { //Cây nhị phân tìm kiếm
 	DATE ngaysinh;
 	string email;
 	string ghiChu;
+	CONTACT* right;
+	CONTACT* left;
 };
 
 struct DATE {
@@ -19,20 +21,18 @@ struct DATE {
 	int year;
 };
 
-struct SDT { //Lưu theo danh sách liên kết đơn
+struct SDT { 
 	int sdt;
 	string tenVung;
 	string Loai;
-	SDT* next;
-	CONTACT conTact;
 };
 
-struct DIACHI { //Lưu theo danh sách liên kết đơn
+struct DIACHI { //Danh sách liên kết đơn
 	string huyen;
 	string tinh;
 	string nuoc;
 	DIACHI* next;
-	CONTACT* ds_contact;
+	CONTACT* ds_conTact;
 };
 
 struct NHOM { //Lưu theo danh sách liên kết đơn
@@ -41,7 +41,7 @@ struct NHOM { //Lưu theo danh sách liên kết đơn
 	NHOM* next;
 };
 
-void Menu(CONTACT*& danhba, SDT*& ds_sdt, DIACHI*& ds_DiaChi, NHOM*& ds_nhom) {
+void Menu(CONTACT*& danhba, DIACHI*& ds_DiaChi, NHOM*& ds_nhom) {
 	int luachon;
 	while (true) {
 		system("cls");
@@ -72,7 +72,6 @@ void Menu(CONTACT*& danhba, SDT*& ds_sdt, DIACHI*& ds_DiaChi, NHOM*& ds_nhom) {
 
 int main() {
 	CONTACT* danhBa = NULL;
-	SDT* ds_sdt = NULL;
 	DIACHI* ds_diaChi = NULL;
 	NHOM* ds_nhom = NULL;
 }
