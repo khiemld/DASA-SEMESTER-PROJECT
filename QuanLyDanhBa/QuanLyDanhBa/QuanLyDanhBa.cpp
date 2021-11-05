@@ -1,22 +1,7 @@
 ﻿#include<iostream>
-#include<queue>
 #include <stdio.h>
 #include <string>
 using namespace std;
-
-struct CONTACT { //Cây nhị phân tìm kiếm
-	SDT* ds_SDT[10]; //Lưu theo mảng động
-	int soLuong; //Số số điện thoại mà một người sở hữu
-	string ten;
-	NHOM nhom;
-	bool gioiTinh;
-	DIACHI diachi;
-	DATE ngaysinh;
-	string email;
-	string ghiChu;
-	CONTACT* right;
-	CONTACT* left;
-};
 
 struct DATE {
 	int day;
@@ -26,146 +11,199 @@ struct DATE {
 
 struct SDT {
 	int sdt;
-	string tenVung;
-	string Loai;
+	//int maQuocGia;
+	string loai;
 };
 
 struct DIACHI { //Danh sách liên kết đơn
-	string huyen;
 	string tinh;
 	string nuoc;
 	DIACHI* next;
-	CONTACT* ds_conTact;
 };
 
 struct NHOM { //Lưu theo danh sách liên kết đơn
 	string ten;
-	CONTACT* ds_contact;
 	NHOM* next;
 };
-CONTACT* CreateContact(SDT* data) {
-	CONTACT* newContact = new CONTACT();
-	if (!newContact) {
-		cout << "Memory error\n";
-		return NULL;
+
+struct DATA {
+	SDT  SDT;
+	string ten;
+	NHOM nhom;
+	string gioiTinh;
+	DIACHI diachi;
+	DATE ngaysinh;
+	string email;
+	string ghiChu;
+};
+
+struct CONTACT { //Cây nhị phân tìm kiếm
+	DATA data;
+	CONTACT* right;
+	CONTACT* left;
+};
+typedef CONTACT* TREE;
+
+//Hàm tách 3 số đầu của số điện thoại
+int tachSoDau(int sdt) {
+	int dem = 1;
+	while (dem <= 7) {
+		sdt /= 10;
+		dem++;
 	}
-	newContact->ds_SDT[0] = data;
-	newContact->left = newContact->right = NULL;
-	return newContact;
+	return sdt;
 }
 
-CONTACT* InsertPhoneNumber(CONTACT* root, SDT* data) {
-	if (root == NULL) {
-		root = CreateContact(data);
-		return root;
-	}
-	queue<CONTACT*>q;
-	q.push(root);
-	while (!q.empty()) {
-		CONTACT* temp = q.front();
-		q.pop();
-		if (temp->left != NULL) q.push(temp->left);
-		else {
-			temp->left = CreateContact(data);
-			return root;
+//Hàm nhập thông điện thoại
+void inputPhoneNumber(SDT& dt) {
+	/*cout << "\tNhập mã nước: ";
+	cin >> dt.maQuocGia;*/
+	cout << "\t\tNhap so dien thoai: ";
+	cin >> dt.sdt;
+	int soDau = tachSoDau(dt.sdt); //Biến để tạm lưu số điện thoại
+	if (soDau == 86 || soDau == 96 || soDau == 97 || soDau == 98 || soDau == 32 || soDau == 33 || soDau == 34 || soDau == 35
+		|| soDau == 36 || soDau == 37 || soDau == 38 || soDau == 39)
+		dt.loai = "Viettel";
+	else if (soDau == 88 || soDau == 91 || soDau == 94 || soDau == 83 || soDau == 84 || soDau == 85 || soDau == 81 || soDau == 82)
+		dt.loai = "Vinaphone";
+	else if (soDau == 89 || soDau == 90 || soDau == 93 || soDau == 70 || soDau == 79 || soDau == 77 || soDau == 76 || soDau == 78)
+		dt.loai = "Mobiphone";
+	else if (soDau == 92 || soDau == 56 || soDau == 58)
+		dt.loai = "Vietnammobile";
+}
+
+//Hàm nhập ngày sinh
+void inputDateBirth(DATE& date) {
+	cout << "\t\tNhap ngay sinh: ";
+	cin >> date.day;
+	cout << "\t\tNhap thang sinh: ";
+	cin >> date.month;
+	cout << "\t\tNhap nam sinh: ";
+	cin >> date.year;
+}
+ 
+//Hàm nhập địa chỉ
+void inputAddress(DIACHI& diaChi) {
+	while (getchar() != '\n');
+	cout << "\t\tTinh: ";
+	getline(cin, diaChi.tinh);
+}
+
+//Hàm nhập thông tin DATA
+void inputDATA(DATA& x) {
+	while (getchar() != '\n');
+	cout << "\t\tNhap ten: ";
+	getline(cin, x.ten);
+	cout << "\t\tGioi tinh: ";
+	getline(cin, x.gioiTinh);
+	inputPhoneNumber(x.SDT);
+	inputAddress(x.diachi);
+	inputDateBirth(x.ngaysinh);
+	while (getchar() != '\n');
+	string ktMail;
+	do {
+		cout << "\t\tBan co muon nhap email <y/n>?";
+		getline(cin, ktMail);
+		if (ktMail == "y") {
+			cout << "\t\tEmail: ";
+			getline(cin, x.email);
+			break;
 		}
-		if (temp->right != NULL) q.push(temp->right);
 		else {
-			temp->right = CreateContact(data);
-			return root;
+			x.email = "";
+			break;
+		}
+	} while (ktMail == "y" || ktMail == "n");
+	string ktNote;
+	do {
+		cout << "\t\tBan co them ghi chu <y/n>?";
+		getline(cin, ktNote);
+		if (ktMail == "y") {
+			cout << "\t\tGhi chu: ";
+			getline(cin, x.ghiChu);
+			break;
+		}
+		else {
+			x.ghiChu = "";
+			break;
+		}
+	} while (ktNote == "y" || ktNote == "n");
+}
+
+//Hàm thêm data
+void insertData(TREE &contact, DATA data) {
+	if (contact == NULL) { //Nếu cây rỗng
+		CONTACT* p = new CONTACT;
+		p->data = data;
+		p->left = NULL;
+		p->right = NULL;
+		contact = p; //Thêm node p vào cây
+	}
+	else {
+		if (contact->data.SDT.sdt < data.SDT.sdt) {
+			insertData(contact->right, data);
+		}
+		else {
+			insertData(contact->left, data);
 		}
 	}
 }
-void printPhoneNumber(CONTACT* temp) {
-	if (temp == NULL)return;
 
-	printPhoneNumber(temp->left);
-	cout << temp << ' ';
-	printPhoneNumber(temp->right);
+//Hàm xuất thông tin
+void printDATA(DATA data) {
+	cout << "\n\t\tTen: " << data.ten;
+	cout << "\n\t\tSo dien thoai: 0" << data.SDT.sdt;
+	cout << "\n\t\tNha mang: " << data.SDT.loai;
+	cout << "\n\t\tGioi tinh: " << data.gioiTinh;
+	cout << "\n\t\tDia chi: tinh " << data.diachi.tinh;
+	cout << "\n\t\tNgay sinh: " << data.ngaysinh.day << "/" << data.ngaysinh.month << "/" << data.ngaysinh.year;
+	if (data.email != "")
+		cout << "\n\t\tEmail: " << data.email;
+	if (data.ghiChu != "")
+		cout << "\n\t\tGhi chu: " << data.ghiChu;
+	cout << "\n";
 }
-void InputPhoneNumber(CONTACT* danhba) {
-	cout << "Moi nhap so dien thoai ban muon them vao danh ba: ";
-	for (int i = 0; i < 10; i++) {
-		if (danhba->ds_SDT[i] != NULL)break; //Neu vi tri hien tai da co so thi den vi tri ke
-		cin >> danhba->ds_SDT[i]->sdt;
-		cout << "Moi nhap ten cua ban o day: ";
-		cin >> danhba->ten; break;
+
+//Hàm duyệt data
+void duyetContact(TREE contact) {
+	if (contact != NULL) {
+		printDATA(contact->data);
+		duyetContact(contact->left);
+		duyetContact(contact->right);
 	}
-	danhba = InsertPhoneNumber(danhba, danhba->ds_SDT);
-	printPhoneNumber(danhba);
-
-
-
-	//int extra = 0;
-	//do {
-	//	cout << "Ban co muon them thong tin cu the cho so dien thoai nay khong?\n/*Nhan 1 neu muon\nNhan 0 neu ban khong can*/";
-	//	cin >> extra;
-	//	if (extra == 1) {
-	//		bool test;
-	//		cout << "Nhan 1 neu ban la nam/ Nhan 0 neu ban la nu";
-	//		cin >> test;
-	//		if (test) {
-	//			danhba->gioiTinh = "Gioi tinh: Nam";
-	//		}
-	//		else {
-	//			danhba->gioiTinh = "Gioi tinh: Nu";
-	//		}
-
-	//		cout << "Hay nhap vao ngay sinh cua ban theo thu tu: ngay, thang, nam:";
-	//		//cin >> danhba->ngaysinh;
-
-	//		cout << "Hay nhap vao dia chi cua ban:";
-	//		//getline(cin, danhba->diachi);
-
-	//		cout << "Hay nhap vao dia chi email cua ban:";
-	//		getline(cin, danhba->email);
-
-	//		cout << "Ban co muon ghi chu gi cho so dien thoai nay khong?";
-	//		getline(cin, danhba->ghiChu);
-	//		
-	//		danhba = InsertPhoneNumber(danhba, danhba->ds_SDT);
-	//		printPhoneNumber(danhba);
-	//	}
-	//	else {
-	//		cout << "Chuc mung ban vua nhap vao so dien thoai voi noi dung nhu sau:";
-	//		danhba = InsertPhoneNumber(danhba, danhba->ds_SDT);
-	//		printPhoneNumber(danhba);
-	//	}
-	//} while (extra != 0 || extra != 1);
-
 }
-void Menu(CONTACT*& danhba, DIACHI*& ds_DiaChi, NHOM*& ds_nhom) {
+
+void Menu(TREE& contact) {
 	int luachon;
 	while (true) {
 		system("cls");
 		cout << "\n\n\t\t::::::::::::::::::::::::::::QUAN LY DANH BA DIEN THOAI::::::::::::::::::::::::::::::::::";
 		cout << "\n\n\t\t1. Them thong tin so dien thoai";
 		cout << "\n\n\t\t2. Xoa thong tin so dien thoai";
-		cout << "\n\n\t\t3. Xuat danh sach so dien thoai theo ten";
+		cout << "\n\n\t\t3. Xuat danh sach so dien thoai";
 		cout << "\n\n\t\t:::::::::::::::::::::::::::::::::::::::END:::::::::::::::::::::::::::::::::::::::::::::::";
 
-		cout << "\n\n\t\t Nhap luachon: ";
+		cout << "\n\n\t\t\t Nhap luachon: ";
 		cin >> luachon;
 
 		if (luachon == 1) {
-			InputPhoneNumber(danhba);
+			DATA data;
+			inputDATA(data);
+			insertData(contact, data);
 		}
-		else if (luachon == 2) {
-
+		else if (luachon == 3) {
+			duyetContact(contact);
+			system("pause");
 		}
 		else {
 			break;
 		}
 
 	}
-
-
 }
 
 
 int main() {
-	CONTACT* danhBa = NULL;
-	DIACHI* ds_diaChi = NULL;
-	NHOM* ds_nhom = NULL;
-	Menu(danhBa, ds_diaChi, ds_nhom);
+	TREE contact = NULL;
+	Menu(contact);
 }
