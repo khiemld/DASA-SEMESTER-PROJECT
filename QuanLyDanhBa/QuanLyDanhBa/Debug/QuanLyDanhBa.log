@@ -1,0 +1,10 @@
+﻿  QuanLyDanhBa.cpp
+D:\git\quan ly danh ba\DASA-SEMESTER-PROJECT\QuanLyDanhBa\QuanLyDanhBa\QuanLyDanhBa.cpp(5,5): error C2143: syntax error: missing ';' before '*'
+D:\git\quan ly danh ba\DASA-SEMESTER-PROJECT\QuanLyDanhBa\QuanLyDanhBa\QuanLyDanhBa.cpp(5,5): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+D:\git\quan ly danh ba\DASA-SEMESTER-PROJECT\QuanLyDanhBa\QuanLyDanhBa\QuanLyDanhBa.cpp(5,17): error C2238: unexpected token(s) preceding ';'
+D:\git\quan ly danh ba\DASA-SEMESTER-PROJECT\QuanLyDanhBa\QuanLyDanhBa\QuanLyDanhBa.cpp(8,7): error C3646: 'nhom': unknown override specifier
+D:\git\quan ly danh ba\DASA-SEMESTER-PROJECT\QuanLyDanhBa\QuanLyDanhBa\QuanLyDanhBa.cpp(8,11): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+D:\git\quan ly danh ba\DASA-SEMESTER-PROJECT\QuanLyDanhBa\QuanLyDanhBa\QuanLyDanhBa.cpp(10,9): error C3646: 'diachi': unknown override specifier
+D:\git\quan ly danh ba\DASA-SEMESTER-PROJECT\QuanLyDanhBa\QuanLyDanhBa\QuanLyDanhBa.cpp(10,15): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+D:\git\quan ly danh ba\DASA-SEMESTER-PROJECT\QuanLyDanhBa\QuanLyDanhBa\QuanLyDanhBa.cpp(11,7): error C3646: 'ngaysinh': unknown override specifier
+D:\git\quan ly danh ba\DASA-SEMESTER-PROJECT\QuanLyDanhBa\QuanLyDanhBa\QuanLyDanhBa.cpp(11,15): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
