@@ -60,7 +60,7 @@ void inputPhoneNumber(SDT& dt) {
 	cin >> dt.maQuocGia;*/
 	cout << "\t\tNhap so dien thoai: ";
 	cin >> dt.sdt;
-	int soDau = tachSoDau(dt.sdt); //Biến để tạm lưu số điện thoại
+	int soDau = tachSoDau(dt.sdt);
 	if (soDau == 86 || soDau == 96 || soDau == 97 || soDau == 98 || soDau == 32 || soDau == 33 || soDau == 34 || soDau == 35
 		|| soDau == 36 || soDau == 37 || soDau == 38 || soDau == 39)
 		dt.loai = "Viettel";
@@ -143,7 +143,7 @@ void insertData(TREE &contact, DATA data) {
 		if (contact->data.SDT.sdt < data.SDT.sdt) {
 			insertData(contact->right, data);
 		}
-		else {
+		else if(contact->data.SDT.sdt > data.SDT.sdt){
 			insertData(contact->left, data);
 		}
 	}
@@ -199,7 +199,7 @@ bool kiemTraTonTai(TREE contact, int sdtData)
 }
 
 //Xóa
-void timNODEThayThe(CONTACT*& X, CONTACT*& Y) {
+void timNODEThayThe(CONTACT*& X, CONTACT*& Y) { //Tìm NODE trái nhất của cây con phải
 	if (Y->left != NULL) {
 		timNODEThayThe(X, Y->left);
 	}
@@ -222,7 +222,7 @@ void deleteContact(TREE& contact, int sdtData) {
 			deleteContact(contact->right, sdtData);
 		}
 		else { 
-			CONTACT* temp = contact; // temp tạm giữ NODE contact
+			CONTACT* temp = contact; // temp tạm giữ NODE contact cần xóa
 			if (contact->left == NULL) {
 				contact = contact->right;
 			}
