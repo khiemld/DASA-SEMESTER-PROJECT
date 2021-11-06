@@ -109,25 +109,25 @@ void inputDATA(DATA& x) {
 			getline(cin, x.email);
 			break;
 		}
-		else {
+		else if(ktMail == "n") {
 			x.email = "";
 			break;
 		}
-	} while (ktMail == "y" || ktMail == "n");
+	} while (ktMail != "y" && ktMail != "n");
 	string ktNote;
 	do {
 		cout << "\t\tBan co them ghi chu <y/n>?";
 		getline(cin, ktNote);
-		if (ktMail == "y") {
+		if (ktNote == "y") {
 			cout << "\t\tGhi chu: ";
 			getline(cin, x.ghiChu);
 			break;
 		}
-		else {
+		else if(ktNote == "n") {
 			x.ghiChu = "";
 			break;
 		}
-	} while (ktNote == "y" || ktNote == "n");
+	} while (ktNote != "y" && ktNote != "n");
 }
 
 //Hàm thêm data
@@ -173,6 +173,74 @@ void duyetContact(TREE contact) {
 	}
 }
 
+//Hàm kiểm tra phần tử có tồn tại
+bool kiemTraTonTai(TREE contact, int sdtData)
+{
+	if (contact == NULL)
+	{
+		return false;
+	}
+	else
+	{
+		if (sdtData == contact->data.SDT.sdt)
+		{
+			return true;
+		}
+		else if (sdtData > contact->data.SDT.sdt)
+		{
+			return	kiemTraTonTai(contact->right, sdtData);
+		}
+		else if (sdtData < contact->data.SDT.sdt)
+		{
+			return kiemTraTonTai(contact->left, sdtData);
+		}
+	}
+	return false;
+}
+
+//Xóa
+void timNODEThayThe(CONTACT*& X, CONTACT*& Y) {
+	if (Y->left != NULL) {
+		timNODEThayThe(X, Y->left);
+	}
+	else {
+		X->data = Y->data;
+		X = Y; // X giữ địa chỉ NODE cần xóa
+		Y = Y->right;
+	}
+}
+
+void deleteContact(TREE& contact, int sdtData) {
+	if (contact == NULL) {
+		return;
+	}
+	else {
+		if (contact->data.SDT.sdt < sdtData) {
+			deleteContact(contact->right, sdtData);
+		}
+		else if (contact->data.SDT.sdt > sdtData) {
+			deleteContact(contact->right, sdtData);
+		}
+		else { 
+			CONTACT* temp = contact; // temp tạm giữ NODE contact
+			if (contact->left == NULL) {
+				contact = contact->right;
+			}
+			else if (contact->right == NULL) {
+				contact = contact->left;
+			}
+			else {
+				//Tìm NODE trái nhất của của cây con phải
+				timNODEThayThe(temp, contact->right);
+			}
+			delete temp;
+		}
+	}
+}
+
+
+
+
 void Menu(TREE& contact) {
 	int luachon;
 	while (true) {
@@ -181,24 +249,41 @@ void Menu(TREE& contact) {
 		cout << "\n\n\t\t1. Them thong tin so dien thoai";
 		cout << "\n\n\t\t2. Xoa thong tin so dien thoai";
 		cout << "\n\n\t\t3. Xuat danh sach so dien thoai";
+		cout << "\n\n\t\t0. Ket thuc";
 		cout << "\n\n\t\t:::::::::::::::::::::::::::::::::::::::END:::::::::::::::::::::::::::::::::::::::::::::::";
 
-		cout << "\n\n\t\t\t Nhap luachon: ";
+		cout << "\n\n\t\t\t Lua chon: ";
 		cin >> luachon;
 
 		if (luachon == 1) {
+			cout << "\n\t\t\tTHEM THONG TIN SO DIEN THOAI\n";
 			DATA data;
 			inputDATA(data);
 			insertData(contact, data);
 		}
+		else if (luachon == 2) {
+			cout << "\n\t\t\tXOA THONG TIN SO DIEN THOAI\n\n";
+			int sdtData;
+			cout << "\n\t\tNhap so dien thoai can xoa: ";
+			cin >> sdtData;
+			if (kiemTraTonTai(contact, sdtData)) { //Kiểm tra số điện thoại cần xóa có tồn tại hay không
+				deleteContact(contact, sdtData);
+				cout << "\n\t\tDeleted................\n";
+				system("pause");
+			}
+			else {
+				cout << "\n\t\tSo dien thoai khong ton tai\n\n";
+				system("pause");
+			}
+		}
 		else if (luachon == 3) {
+			cout << "\n\t\t\tDANH SACH SO DIEN THOAI\n";
 			duyetContact(contact);
 			system("pause");
 		}
-		else {
+		else if(luachon == 0){
 			break;
 		}
-
 	}
 }
 
