@@ -44,6 +44,7 @@ struct CONTACT { //Cây nhị phân tìm kiếm
 };
 typedef CONTACT* TREE;
 
+
 //Hàm tách 3 số đầu của số điện thoại
 int tachSoDau(int sdt) {
 	int dem = 1;
@@ -149,6 +150,57 @@ void insertData(TREE &contact, DATA data) {
 	}
 }
 
+//Chuyển cây nhị phân tìm kiếm sang danh sách liên kết đơn.
+void flatten(TREE& contact)
+{
+	// base condition- return if root is NULL
+	// or if it is a leaf node
+	if (contact == NULL || contact->left == NULL &&
+		contact->right == NULL) {
+		return;
+	}
+
+	// if root->left exists then we have
+	// to make it root->right
+	if (contact->left != NULL) {
+
+		// move left recursively
+		flatten(contact->left);
+
+		// store the node root->right
+		TREE tmpRight = contact->right;
+		contact->right = contact->left;
+		contact->left = NULL;
+
+		// find the position to insert
+		// the stored value  
+		TREE t = contact->right;
+		while (t->right != NULL) {
+			t = t->right;
+		}
+
+		// insert the stored value
+		t->right = tmpRight;
+	}
+
+	// now call the same function
+	// for root->right
+	flatten(contact->right);
+}
+
+
+// To find the inorder traversal
+void inorder(TREE& contact)
+{
+	// base condition
+	if (contact == NULL)
+		return;
+	inorder(contact->left);
+	cout << contact->data.SDT.sdt << " ";
+	inorder(contact->right);
+}
+
+
 //Hàm xuất thông tin
 void printDATA(DATA data) {
 	cout << "\n\t\tTen: " << data.ten;
@@ -249,6 +301,7 @@ void Menu(TREE& contact) {
 		cout << "\n\n\t\t1. Them thong tin so dien thoai";
 		cout << "\n\n\t\t2. Xoa thong tin so dien thoai";
 		cout << "\n\n\t\t3. Xuat danh sach so dien thoai";
+		cout << "\n\n\t\t4. Chuyen sang linked list";
 		cout << "\n\n\t\t0. Ket thuc";
 		cout << "\n\n\t\t:::::::::::::::::::::::::::::::::::::::END:::::::::::::::::::::::::::::::::::::::::::::::";
 
@@ -281,9 +334,18 @@ void Menu(TREE& contact) {
 			duyetContact(contact);
 			system("pause");
 		}
-		else if(luachon == 0){
+		else if (luachon == 0) {
 			break;
 		}
+		else if (luachon == 4) {
+			flatten(contact);
+
+			cout << "The Inorder traversal after "
+				"flattening binary tree ";
+			inorder(contact);
+			system("pause");
+		}
+		
 	}
 }
 
