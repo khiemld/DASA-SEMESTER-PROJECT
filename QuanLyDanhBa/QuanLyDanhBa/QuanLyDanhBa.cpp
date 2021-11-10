@@ -151,7 +151,7 @@ void insertData(TREE &contact, DATA data) {
 }
 
 //Chuyển cây nhị phân tìm kiếm sang danh sách liên kết đơn.
-void flatten(TREE& contact)
+void flatten(TREE contact)
 {
 	// base condition- return if root is NULL
 	// or if it is a leaf node
@@ -188,16 +188,21 @@ void flatten(TREE& contact)
 	flatten(contact->right);
 }
 
-
-// To find the inorder traversal
-void inorder(TREE& contact)
+void SapXepDanhBaTheoTen(TREE contact)
 {
-	// base condition
-	if (contact == NULL)
-		return;
-	inorder(contact->left);
-	cout << contact->data.SDT.sdt << " ";
-	inorder(contact->right);
+	TREE p = contact;
+	TREE q = p->right;
+	while (p->right != NULL)
+	{
+		q = p->right;
+		while (q!=NULL)
+		{
+			if (p->data.ten.compare(q->data.ten) > 0)
+				swap(p->data, q->data);
+			q = q->right;
+		}
+		p = p->right;
+	}
 }
 
 
@@ -301,7 +306,7 @@ void Menu(TREE& contact) {
 		cout << "\n\n\t\t1. Them thong tin so dien thoai";
 		cout << "\n\n\t\t2. Xoa thong tin so dien thoai";
 		cout << "\n\n\t\t3. Xuat danh sach so dien thoai";
-		cout << "\n\n\t\t4. Chuyen sang linked list";
+		cout << "\n\n\t\t4. Xuat danh sach so dien thoai theo ten";
 		cout << "\n\n\t\t0. Ket thuc";
 		cout << "\n\n\t\t:::::::::::::::::::::::::::::::::::::::END:::::::::::::::::::::::::::::::::::::::::::::::";
 
@@ -339,10 +344,8 @@ void Menu(TREE& contact) {
 		}
 		else if (luachon == 4) {
 			flatten(contact);
-
-			cout << "The Inorder traversal after "
-				"flattening binary tree ";
-			inorder(contact);
+			SapXepDanhBaTheoTen(contact);
+			duyetContact(contact);
 			system("pause");
 		}
 		
