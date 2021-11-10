@@ -238,7 +238,29 @@ void deleteContact(TREE& contact, int sdtData) {
 	}
 }
 
-
+void searchPhoneNumber(TREE& contact, int sdtData) 
+{
+	if (contact != NULL) {
+		string data = to_string(sdtData); // Convert số nhập vào sang kiểu string
+		string Contact = to_string(contact->data.SDT.sdt); //Convert số trong cây nhị phân sang kiểu string
+		
+		if (data == Contact) 
+			printDATA(contact->data); // Nếu số nhập vào trùng thì in thông tin danh bạ
+		int m = data.size();
+		int n = Contact.size();
+		int count = 0;
+		
+		for (int i = 0; i < m; i++) {
+			if (data[i] == Contact[i]) //Nếu từng chữ số nhập vào trùng với các chữ số trong cây nhị phân
+				count++; //  thì ta tăng biến đếm
+			
+			if (count == data.size()) // Nếu biến đếm trùng với kích thước của số nhập vào
+				printDATA(contact->data); // thì ta in thông tin danh bạ
+		}
+		searchPhoneNumber(contact->left, sdtData); // Tiếp tục tìm kiếm các số trùng với số nhập vào ở bên trái
+		searchPhoneNumber(contact->right,sdtData); // và ở bên phải		
+	}
+}
 
 
 void Menu(TREE& contact) {
@@ -249,6 +271,7 @@ void Menu(TREE& contact) {
 		cout << "\n\n\t\t1. Them thong tin so dien thoai";
 		cout << "\n\n\t\t2. Xoa thong tin so dien thoai";
 		cout << "\n\n\t\t3. Xuat danh sach so dien thoai";
+		cout << "\n\n\t\t4. Tim thong tin danh ba theo so dien thoai";
 		cout << "\n\n\t\t0. Ket thuc";
 		cout << "\n\n\t\t:::::::::::::::::::::::::::::::::::::::END:::::::::::::::::::::::::::::::::::::::::::::::";
 
@@ -279,6 +302,13 @@ void Menu(TREE& contact) {
 		else if (luachon == 3) {
 			cout << "\n\t\t\tDANH SACH SO DIEN THOAI\n";
 			duyetContact(contact);
+			system("pause");
+		}
+		else if (luachon == 4) {
+			int sdtData;
+			cout << "\n\t\tNhap so dien thoai ban can tim: ";
+			cin >> sdtData;
+			searchPhoneNumber(contact, sdtData);
 			system("pause");
 		}
 		else if(luachon == 0){
