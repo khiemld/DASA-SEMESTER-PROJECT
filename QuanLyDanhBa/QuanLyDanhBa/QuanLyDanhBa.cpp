@@ -44,6 +44,7 @@ struct CONTACT { //Cây nhị phân tìm kiếm
 };
 typedef CONTACT* TREE;
 
+
 //Hàm tách 3 số đầu của số điện thoại
 int tachSoDau(int sdt) {
 	int dem = 1;
@@ -238,6 +239,8 @@ void deleteContact(TREE& contact, int sdtData) {
 	}
 }
 
+
+//Hàm tìm kiếm số điện thoại theo tên
 void searchPhoneNumber(TREE& contact, int sdtData) 
 {
 	if (contact != NULL) {
@@ -272,6 +275,7 @@ void Menu(TREE& contact) {
 		cout << "\n\n\t\t2. Xoa thong tin so dien thoai";
 		cout << "\n\n\t\t3. Xuat danh sach so dien thoai";
 		cout << "\n\n\t\t4. Tim thong tin danh ba theo so dien thoai";
+		cout << "\n\n\t\t5. Xuat danh sach so dien thoai theo ten";
 		cout << "\n\n\t\t0. Ket thuc";
 		cout << "\n\n\t\t:::::::::::::::::::::::::::::::::::::::END:::::::::::::::::::::::::::::::::::::::::::::::";
 
@@ -311,7 +315,11 @@ void Menu(TREE& contact) {
 			searchPhoneNumber(contact, sdtData);
 			system("pause");
 		}
-		else if(luachon == 0){
+		else if (luachon == 5) {
+
+		}
+		else if (luachon == 0) {
+
 			break;
 		}
 	}
