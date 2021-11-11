@@ -25,7 +25,10 @@ struct DATA {
 	string ghiChu;
 };
 
-
+struct NODE {
+	DATA data;
+	NODE* pNext;
+};
 
 struct CONTACT { //Cây nhị phân tìm kiếm
 	DATA data;
@@ -121,6 +124,41 @@ void inputDATA(DATA& x) {
 		}
 	} while (ktNote != "y" && ktNote != "n");
 }
+
+//Khỏi tạo Node
+NODE* khoiTaoNODE_nv(DATA x) {
+	NODE* p = new NODE;
+	p->data = x;
+	p->pNext = NULL;
+	return p;
+}
+
+//Thêm NODE vào cuối danh sách
+void themNODE(NODE*& pHead, NODE* p) {
+	if (pHead == NULL) {
+		pHead = p;
+	}
+	else {
+		for (NODE* k = pHead; k != NULL; k = k->pNext) {
+			if (k->pNext == NULL) {
+				k->pNext = p;
+				return;
+			}
+		}
+	}
+}
+
+
+//Xử lí chuyển dữ liệu từ BFS sang DSLKD
+void BTStoLinkedList(TREE t, NODE*& pHead) {
+	if (t != NULL) {
+		NODE* p = khoiTaoNODE_nv(t->data);
+		themNODE(pHead, p);
+		BTStoLinkedList(t->right, pHead);
+		BTStoLinkedList(t->left, pHead);
+	}
+}
+
 
 //Hàm thêm data
 void insertData(TREE &contact, DATA data) {
@@ -239,6 +277,22 @@ void deleteContact(TREE& contact, int sdtData) {
 	}
 }
 
+void XuatDanhBaTheoTen(NODE* pHead) {
+	for (NODE* k = pHead; k != NULL; k = k->pNext) {
+		for (NODE* h = k->pNext; h != NULL; h = h->pNext) {
+			if (strcmp(k->data.ten.c_str(), h->data.ten.c_str()) > 0) {
+				swap(k->data, h->data);
+			}
+		}
+	}
+
+	//Xuất họ tên nhân viên
+	for (NODE* k = pHead; k != NULL; k = k->pNext) {
+		printDATA(k->data);
+	}
+}
+
+
 //Hàm tìm kiếm số điện thoại theo tên
 void searchPhoneNumber(TREE& contact, int sdtData) 
 {
@@ -279,7 +333,7 @@ void printGroup(TREE contact, int maNhom) {
 }
 
 
-void Menu(TREE& contact) {
+void Menu(TREE& contact,NODE*& pHead) {
 	int luachon;
 	while (true) {
 		system("cls");
@@ -330,6 +384,18 @@ void Menu(TREE& contact) {
 			searchPhoneNumber(contact, sdtData);
 			system("pause");
 		}
+		else if (luachon == 5) {
+			cout << "\n\t\t\tXUAT DANH SACH THEO TEN";
+			BTStoLinkedList(contact, pHead);
+			XuatDanhBaTheoTen(pHead);
+			NODE* tam = NULL;
+			while (pHead != NULL) {
+				tam = pHead;
+				pHead = pHead->pNext;
+				delete tam;
+			}
+			system("pause");
+		}
 		else if (luachon == 6) {
 			cout << "\n\t\t\tXUAT DANH SACH THEO NHOM";
 			cout << "\n\t\tBan muon xuat danh sach nhom?";
@@ -352,5 +418,6 @@ void Menu(TREE& contact) {
 
 int main() {
 	TREE contact = NULL;
-	Menu(contact);
+	NODE* pHead = NULL;
+	Menu(contact, pHead);
 }
