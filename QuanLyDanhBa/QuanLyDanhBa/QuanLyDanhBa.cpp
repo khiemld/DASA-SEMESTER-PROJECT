@@ -11,31 +11,21 @@ struct DATE {
 
 struct SDT {
 	int sdt;
-	//int maQuocGia;
 	string loai;
-};
-
-struct DIACHI { //Danh sách liên kết đơn
-	string tinh;
-	string nuoc;
-	DIACHI* next;
-};
-
-struct NHOM { //Lưu theo danh sách liên kết đơn
-	string ten;
-	NHOM* next;
 };
 
 struct DATA {
 	SDT  SDT;
 	string ten;
-	NHOM nhom;
+	int nhom; //1: Gia dinh, 2: Ban be, 3: Cong viec
 	string gioiTinh;
-	DIACHI diachi;
+	string diachi;
 	DATE ngaysinh;
 	string email;
 	string ghiChu;
 };
+
+
 
 struct CONTACT { //Cây nhị phân tìm kiếm
 	DATA data;
@@ -83,13 +73,6 @@ void inputDateBirth(DATE& date) {
 	cin >> date.year;
 }
  
-//Hàm nhập địa chỉ
-void inputAddress(DIACHI& diaChi) {
-	while (getchar() != '\n');
-	cout << "\t\tTinh: ";
-	getline(cin, diaChi.tinh);
-}
-
 //Hàm nhập thông tin DATA
 void inputDATA(DATA& x) {
 	while (getchar() != '\n');
@@ -98,8 +81,16 @@ void inputDATA(DATA& x) {
 	cout << "\t\tGioi tinh: ";
 	getline(cin, x.gioiTinh);
 	inputPhoneNumber(x.SDT);
-	inputAddress(x.diachi);
+	while (getchar() != '\n');
+	cout << "\t\tDia chi: ";
+	getline(cin, x.diachi);
 	inputDateBirth(x.ngaysinh);
+	cout << "\t\tChon nhom";
+	cout << "\n\t\t\tNhap '1' chon Gia dinh";
+	cout << "\n\t\t\tNhap '2' chon Ban be";
+	cout << "\n\t\t\tNhap '3' chon Cong viec";
+	cout << "\n\t\tLua chon: ";
+	cin >> x.nhom;
 	while (getchar() != '\n');
 	string ktMail;
 	do {
@@ -156,8 +147,17 @@ void printDATA(DATA data) {
 	cout << "\n\t\tSo dien thoai: 0" << data.SDT.sdt;
 	cout << "\n\t\tNha mang: " << data.SDT.loai;
 	cout << "\n\t\tGioi tinh: " << data.gioiTinh;
-	cout << "\n\t\tDia chi: tinh " << data.diachi.tinh;
+	cout << "\n\t\tDia chi: " << data.diachi;
 	cout << "\n\t\tNgay sinh: " << data.ngaysinh.day << "/" << data.ngaysinh.month << "/" << data.ngaysinh.year;
+	if (data.nhom == 1) {
+		cout << "\n\t\tNhom: Gia dinh";
+	}
+	else if (data.nhom == 2) {
+		cout << "\n\t\tNhom: Ban be";
+	}
+	else if (data.nhom == 3) {
+		cout << "\n\t\tNhom: Cong viec";
+	}
 	if (data.email != "")
 		cout << "\n\t\tEmail: " << data.email;
 	if (data.ghiChu != "")
@@ -239,7 +239,6 @@ void deleteContact(TREE& contact, int sdtData) {
 	}
 }
 
-
 //Hàm tìm kiếm số điện thoại theo tên
 void searchPhoneNumber(TREE& contact, int sdtData) 
 {
@@ -249,19 +248,33 @@ void searchPhoneNumber(TREE& contact, int sdtData)
 		
 		if (data == Contact) 
 			printDATA(contact->data); // Nếu số nhập vào trùng thì in thông tin danh bạ
-		int m = data.size();
-		int n = Contact.size();
-		int count = 0;
 		
-		for (int i = 0; i < m; i++) {
-			if (data[i] == Contact[i]) //Nếu từng chữ số nhập vào trùng với các chữ số trong cây nhị phân
-				count++; //  thì ta tăng biến đếm
-			
-			if (count == data.size()) // Nếu biến đếm trùng với kích thước của số nhập vào
-				printDATA(contact->data); // thì ta in thông tin danh bạ
+		
+		else {
+			int m = data.size();
+			int n = Contact.size();
+			int count = 0;
+
+			for (int i = 0; i < m; i++) {
+				if (data[i] == Contact[i]) //Nếu từng chữ số nhập vào trùng với các chữ số trong cây nhị phân
+					count++; //  thì ta tăng biến đếm
+
+				if (count == data.size()) // Nếu biến đếm trùng với kích thước của số nhập vào
+					printDATA(contact->data); // thì ta in thông tin danh bạ
+			}
 		}
 		searchPhoneNumber(contact->left, sdtData); // Tiếp tục tìm kiếm các số trùng với số nhập vào ở bên trái
 		searchPhoneNumber(contact->right,sdtData); // và ở bên phải		
+	}
+}
+
+//Hàm xuất danh sách theo nhóm
+void printGroup(TREE contact, int maNhom) {
+	if (contact != NULL) {
+		if (contact->data.nhom == maNhom)
+			printDATA(contact->data);
+		printGroup(contact->left, maNhom);
+		printGroup(contact->right, maNhom);
 	}
 }
 
@@ -276,10 +289,11 @@ void Menu(TREE& contact) {
 		cout << "\n\n\t\t3. Xuat danh sach so dien thoai";
 		cout << "\n\n\t\t4. Tim thong tin danh ba theo so dien thoai";
 		cout << "\n\n\t\t5. Xuat danh sach so dien thoai theo ten";
+		cout << "\n\n\t\t6. Xuat danh sach theo nhom";
 		cout << "\n\n\t\t0. Ket thuc";
 		cout << "\n\n\t\t:::::::::::::::::::::::::::::::::::::::END:::::::::::::::::::::::::::::::::::::::::::::::";
 
-		cout << "\n\n\t\t\t Lua chon: ";
+		cout << "\n\n\t\t\t Chon chuc nang: ";
 		cin >> luachon;
 
 		if (luachon == 1) {
@@ -309,14 +323,24 @@ void Menu(TREE& contact) {
 			system("pause");
 		}
 		else if (luachon == 4) {
+			cout << "\n\t\t\tTIM KIEM SO DIEN THOAI";
 			int sdtData;
 			cout << "\n\t\tNhap so dien thoai ban can tim: ";
 			cin >> sdtData;
 			searchPhoneNumber(contact, sdtData);
 			system("pause");
 		}
-		else if (luachon == 5) {
-
+		else if (luachon == 6) {
+			cout << "\n\t\t\tXUAT DANH SACH THEO NHOM";
+			cout << "\n\t\tBan muon xuat danh sach nhom?";
+			cout << "\n\t\t\tNhap '1' chon Gia dinh";
+			cout << "\n\t\t\tNhap '2' chon Ban be";
+			cout << "\n\t\t\tNhap '3' chon Cong viec";
+			cout << "\n\t\tLua chon: ";
+			int maNhom;
+			cin >> maNhom;
+			printGroup(contact, maNhom);
+			system("pause");
 		}
 		else if (luachon == 0) {
 
