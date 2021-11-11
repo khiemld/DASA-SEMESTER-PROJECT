@@ -44,6 +44,18 @@ struct CONTACT { //Cây nhị phân tìm kiếm
 };
 typedef CONTACT* TREE;
 
+struct NODE {
+	DATA data;
+	NODE* pNext;
+};
+
+
+NODE* KhoiTaoNODE(DATA x) {
+	NODE* p = new NODE;
+	p->data = x;
+	p->pNext = NULL;
+	return p;
+}
 
 //Hàm tách 3 số đầu của số điện thoại
 int tachSoDau(int sdt) {
@@ -150,60 +162,32 @@ void insertData(TREE &contact, DATA data) {
 	}
 }
 
-//Chuyển cây nhị phân tìm kiếm sang danh sách liên kết đơn.
-void flatten(TREE contact)
-{
-	// base condition- return if root is NULL
-	// or if it is a leaf node
-	if (contact == NULL || contact->left == NULL &&
-		contact->right == NULL) {
-		return;
+
+//Thêm NODE vào cuối danh sách
+void themNODE(NODE*& pHead,NODE *p) {
+	if (pHead == NULL) {
+		pHead = p;
 	}
-
-	// if root->left exists then we have
-	// to make it root->right
-	if (contact->left != NULL) {
-
-		// move left recursively
-		flatten(contact->left);
-
-		// store the node root->right
-		TREE tmpRight = contact->right;
-		contact->right = contact->left;
-		contact->left = NULL;
-
-		// find the position to insert
-		// the stored value  
-		TREE t = contact->right;
-		while (t->right != NULL) {
-			t = t->right;
+	else {
+		for (NODE* k = pHead; k != NULL; k = k->pNext) {
+			//if (k->pNext == NULL) {
+				k->pNext = p;
+				return;
+			
 		}
-
-		// insert the stored value
-		t->right = tmpRight;
 	}
-
-	// now call the same function
-	// for root->right
-	flatten(contact->right);
 }
 
-void SapXepDanhBaTheoTen(TREE contact)
-{
-	TREE p = contact;
-	TREE q = p->right;
-	while (p->right != NULL)
-	{
-		q = p->right;
-		while (q!=NULL)
-		{
-			if (p->data.ten.compare(q->data.ten) > 0)
-				swap(p->data, q->data);
-			q = q->right;
-		}
-		p = p->right;
+//Hàm chuyển cây nhị phân sang danh sách liên kết đơn
+void BFStoLL(TREE t, NODE*& pHead) {
+	if (t != NULL) {
+		NODE* p = KhoiTaoNODE(t->data);
+		themNODE(pHead,p);
+		BFStoLL(t->right, pHead);
+		BFStoLL(t->left, pHead);
 	}
 }
+
 
 
 //Hàm xuất thông tin
@@ -295,10 +279,25 @@ void deleteContact(TREE& contact, int sdtData) {
 	}
 }
 
+//Hàm sắp xếp và in danh bạ theo tên (A->Z)
+void SapXepDanhBaTheoTen(NODE* pHead)
+{
+	for (NODE* k = pHead; k != NULL; k = k->pNext) {
+		for (NODE* h = k->pNext; h != NULL; h = h->pNext) {
+			if (strcmp(k->data.ten.c_str(), h->data.ten.c_str()) > 0) {
+				swap(k->data, h->data);
+			}
+
+		}
+	}
+	for (NODE* k = pHead; k != NULL; k = k->pNext) {
+		printDATA(k->data);
+	}
+}
 
 
 
-void Menu(TREE& contact) {
+void Menu(TREE& contact, NODE*& pHead) {
 	int luachon;
 	while (true) {
 		system("cls");
@@ -343,9 +342,14 @@ void Menu(TREE& contact) {
 			break;
 		}
 		else if (luachon == 4) {
-			flatten(contact);
-			SapXepDanhBaTheoTen(contact);
-			duyetContact(contact);
+			BFStoLL(contact,pHead);
+			SapXepDanhBaTheoTen(pHead);
+			NODE* tam = NULL;
+			while (pHead != NULL) {
+				tam = pHead;
+				pHead = pHead->pNext;
+				delete tam;
+			}
 			system("pause");
 		}
 		
@@ -355,5 +359,6 @@ void Menu(TREE& contact) {
 
 int main() {
 	TREE contact = NULL;
-	Menu(contact);
+	NODE* pHead = NULL;
+	Menu(contact, pHead);
 }
