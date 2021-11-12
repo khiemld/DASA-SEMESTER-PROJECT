@@ -1,6 +1,7 @@
 ﻿#include<iostream>
 #include <stdio.h>
 #include <string>
+#include<fstream>
 using namespace std;
 
 struct DATE {
@@ -445,9 +446,34 @@ void Menu(TREE& contact,NODE*& pHead) {
 	}
 }
 
+//Doc mot thong tin
+void docData(ifstream &filein, DATA &data) {
+	getline(filein, data.ten, ',');
+	getline(filein, data.gioiTinh, ',');
+	getline(filein, data.diachi);
+	filein >> data.SDT.sdt >> data.nhom >> data.ngaysinh.day >> data.ngaysinh.month >> data.ngaysinh.year;
+}
+
+
+//Doc danh sach thong tin
+void docDanhSachData(ifstream &filein, TREE &contact) {
+	while (filein.eof() == false) {
+		DATA data;
+		docData(filein, data);
+		insertData(contact, data);
+	}
+}
 
 int main() {
 	TREE contact = NULL;
 	NODE* pHead = NULL;
+	ifstream filein;
+	filein.open("input.txt", ios_base::in);
+	if(filein.fail()) {
+		cout << "\n\t\t\tDuong dan khong hop le";
+		return 0;
+	}
+	docDanhSachData(filein, contact);
+	filein.close();
 	Menu(contact, pHead);
 }
