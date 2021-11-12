@@ -1,7 +1,7 @@
 ﻿#include<iostream>
 #include <stdio.h>
 #include <string>
-#include<fstream>
+#include <fstream>
 using namespace std;
 
 struct DATE {
@@ -76,7 +76,7 @@ void inputDateBirth(DATE& date) {
 	cout << "\t\tNhap nam sinh: ";
 	cin >> date.year;
 }
- 
+
 //Hàm nhập thông tin DATA
 void inputDATA(DATA& x) {
 	while (getchar() != '\n');
@@ -105,7 +105,7 @@ void inputDATA(DATA& x) {
 			getline(cin, x.email);
 			break;
 		}
-		else if(ktMail == "n") {
+		else if (ktMail == "n") {
 			x.email = "";
 			break;
 		}
@@ -119,7 +119,7 @@ void inputDATA(DATA& x) {
 			getline(cin, x.ghiChu);
 			break;
 		}
-		else if(ktNote == "n") {
+		else if (ktNote == "n") {
 			x.ghiChu = "";
 			break;
 		}
@@ -162,7 +162,7 @@ void BTStoLinkedList(TREE t, NODE*& pHead) {
 
 
 //Hàm thêm data
-void insertData(TREE &contact, DATA data) {
+void insertData(TREE& contact, DATA data) {
 	if (contact == NULL) { //Nếu cây rỗng
 		CONTACT* p = new CONTACT;
 		p->data = data;
@@ -174,7 +174,7 @@ void insertData(TREE &contact, DATA data) {
 		if (contact->data.SDT.sdt < data.SDT.sdt) {
 			insertData(contact->right, data);
 		}
-		else if(contact->data.SDT.sdt > data.SDT.sdt){
+		else if (contact->data.SDT.sdt > data.SDT.sdt) {
 			insertData(contact->left, data);
 		}
 	}
@@ -261,7 +261,7 @@ void deleteContact(TREE& contact, int sdtData) {
 		else if (contact->data.SDT.sdt > sdtData) {
 			deleteContact(contact->right, sdtData);
 		}
-		else { 
+		else {
 			CONTACT* temp = contact; // temp tạm giữ NODE contact cần xóa
 			if (contact->left == NULL) {
 				contact = contact->right;
@@ -295,16 +295,18 @@ void XuatDanhBaTheoTen(NODE* pHead) {
 
 
 //Hàm tìm kiếm số điện thoại theo tên
-void searchPhoneNumber(TREE& contact, int sdtData) 
+void searchPhoneNumber(TREE& contact, int sdtData, bool& flat)
 {
+
 	if (contact != NULL) {
 		string data = to_string(sdtData); // Convert số nhập vào sang kiểu string
 		string Contact = to_string(contact->data.SDT.sdt); //Convert số trong cây nhị phân sang kiểu string
-		
-		if (data == Contact) 
+
+		if (data == Contact)
+		{
 			printDATA(contact->data); // Nếu số nhập vào trùng thì in thông tin danh bạ
-		
-		
+			flat = 1;
+		}
 		else {
 			int m = data.size();
 			int n = Contact.size();
@@ -315,26 +317,31 @@ void searchPhoneNumber(TREE& contact, int sdtData)
 					count++; //  thì ta tăng biến đếm
 
 				if (count == data.size()) // Nếu biến đếm trùng với kích thước của số nhập vào
+				{
 					printDATA(contact->data); // thì ta in thông tin danh bạ
+					flat = 1;
+				}
+
 			}
 		}
-		searchPhoneNumber(contact->left, sdtData); // Tiếp tục tìm kiếm các số trùng với số nhập vào ở bên trái
-		searchPhoneNumber(contact->right,sdtData); // và ở bên phải		
+		searchPhoneNumber(contact->left, sdtData, flat); // Tiếp tục tìm kiếm các số trùng với số nhập vào ở bên trái
+		searchPhoneNumber(contact->right, sdtData, flat); // và ở bên phải	
 	}
+
 }
 //Tim thong tin theo ten
-void SearchName(NODE*& data,string name,int x)
+void SearchName(NODE*& data, string name, int x)
 {
 	if (data == NULL)
 		return;
 	NODE* p = data;
 	fflush(stdin);
-	string name2 = p->data.ten.substr(0,x);//  coppy n phan tu dau cua choi
+	string name2 = p->data.ten.substr(0, x);//  coppy n phan tu dau cua choi
 	if (name2.compare(name) == 0)// so sanh 2 chuoi
 	{
 		printDATA(p->data);
 	}
-	SearchName(p->pNext,name,x);
+	SearchName(p->pNext, name, x);
 }
 //Hàm xuất danh sách theo nhóm
 void printGroup(TREE contact, int maNhom) {
@@ -346,7 +353,7 @@ void printGroup(TREE contact, int maNhom) {
 	}
 }
 
-void Menu(TREE& contact,NODE*& pHead) {
+void Menu(TREE& contact, NODE*& pHead) {
 	int luachon;
 	while (true) {
 		system("cls");
@@ -357,7 +364,7 @@ void Menu(TREE& contact,NODE*& pHead) {
 		cout << "\n\n\t\t4. Tim thong tin danh ba theo so dien thoai";
 		cout << "\n\n\t\t5. Xuat danh sach so dien thoai theo ten";
 		cout << "\n\n\t\t6. Xuat danh sach theo nhom";
-		cout << "\n\n\t\t7. Tim kiem theo ten";
+		cout << "\n\n\t\t7. Tim ten";
 		cout << "\n\n\t\t0. Ket thuc";
 		cout << "\n\n\t\t:::::::::::::::::::::::::::::::::::::::END:::::::::::::::::::::::::::::::::::::::::::::::";
 
@@ -393,9 +400,12 @@ void Menu(TREE& contact,NODE*& pHead) {
 		else if (luachon == 4) {
 			cout << "\n\t\t\tTIM KIEM SO DIEN THOAI";
 			int sdtData;
+			bool flat = 0;
 			cout << "\n\t\tNhap so dien thoai ban can tim: ";
 			cin >> sdtData;
-			searchPhoneNumber(contact, sdtData);
+			searchPhoneNumber(contact, sdtData, flat);
+			if (flat == 0)
+				cout << "\n\t\tSo dien thoai khong ton tai\n\n";
 			system("pause");
 		}
 		else if (luachon == 5) {
@@ -431,7 +441,7 @@ void Menu(TREE& contact,NODE*& pHead) {
 			while (getchar() != '\n');
 			getline(cin, name);
 			int leng = name.length();
-			SearchName(pHead,name,leng);
+			SearchName(pHead, name, leng);
 			NODE* tam = NULL;
 			while (pHead != NULL) {
 				tam = pHead;
@@ -447,7 +457,7 @@ void Menu(TREE& contact,NODE*& pHead) {
 }
 
 //Doc mot thong tin
-void docData(ifstream &filein, DATA &data) {
+void docData(ifstream& filein, DATA& data) {
 	getline(filein, data.ten, ',');
 	getline(filein, data.gioiTinh, ',');
 	getline(filein, data.diachi);
@@ -456,20 +466,19 @@ void docData(ifstream &filein, DATA &data) {
 
 
 //Doc danh sach thong tin
-void docDanhSachData(ifstream &filein, TREE &contact) {
+void docDanhSachData(ifstream& filein, TREE& contact) {
 	while (filein.eof() == false) {
 		DATA data;
 		docData(filein, data);
 		insertData(contact, data);
 	}
 }
-
 int main() {
 	TREE contact = NULL;
 	NODE* pHead = NULL;
 	ifstream filein;
 	filein.open("input.txt", ios_base::in);
-	if(filein.fail()) {
+	if (filein.fail()) {
 		cout << "\n\t\t\tDuong dan khong hop le";
 		return 0;
 	}
