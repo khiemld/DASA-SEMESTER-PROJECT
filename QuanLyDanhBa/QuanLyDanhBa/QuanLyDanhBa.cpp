@@ -1,6 +1,7 @@
 ﻿#include<iostream>
 #include <stdio.h>
 #include <string>
+#include<fstream>
 using namespace std;
 
 struct DATE {
@@ -337,15 +338,15 @@ void Menu(TREE& contact,NODE*& pHead) {
 	int luachon;
 	while (true) {
 		system("cls");
-		cout << "\n\n\t\t::::::::::::::::::::::::::::QUAN LY DANH BA DIEN THOAI::::::::::::::::::::::::::::::::::";
-		cout << "\n\n\t\t1. Them thong tin so dien thoai";
-		cout << "\n\n\t\t2. Xoa thong tin so dien thoai";
-		cout << "\n\n\t\t3. Xuat danh sach so dien thoai";
-		cout << "\n\n\t\t4. Tim thong tin danh ba theo so dien thoai";
-		cout << "\n\n\t\t5. Xuat danh sach so dien thoai theo ten";
-		cout << "\n\n\t\t6. Xuat danh sach theo nhom";
-		cout << "\n\n\t\t0. Ket thuc";
-		cout << "\n\n\t\t:::::::::::::::::::::::::::::::::::::::END:::::::::::::::::::::::::::::::::::::::::::::::";
+		cout << "\n\n\t\t::::::::::::::::::::::::::::QUAN LY DANH BA DIEN THOAI::::::::::::::::::::::::::::";
+		cout << "\n\n\t\t\t\t\t1. Them thong tin so dien thoai";
+		cout << "\n\n\t\t\t\t\t2. Xoa thong tin so dien thoai";
+		cout << "\n\n\t\t\t\t\t3. Xuat danh sach so dien thoai";
+		cout << "\n\n\t\t\t\t\t4. Tim thong tin danh ba theo so dien thoai";
+		cout << "\n\n\t\t\t\t\t5. Xuat danh sach so dien thoai theo ten";
+		cout << "\n\n\t\t\t\t\t6. Xuat danh sach theo nhom";
+		cout << "\n\n\t\t\t\t\t0. Ket thuc";
+		cout << "\n\n\t\t:::::::::::::::::::::::::::::::::::::::END:::::::::::::::::::::::::::::::::::::::::";
 
 		cout << "\n\n\t\t\t Chon chuc nang: ";
 		cin >> luachon;
@@ -409,15 +410,39 @@ void Menu(TREE& contact,NODE*& pHead) {
 			system("pause");
 		}
 		else if (luachon == 0) {
-
 			break;
 		}
 	}
 }
 
+//Doc mot thong tin
+void docData(ifstream &filein, DATA &data) {
+	getline(filein, data.ten, ',');
+	getline(filein, data.gioiTinh, ',');
+	getline(filein, data.diachi);
+	filein >> data.SDT.sdt >> data.nhom >> data.ngaysinh.day >> data.ngaysinh.month >> data.ngaysinh.year;
+}
+
+
+//Doc danh sach thong tin
+void docDanhSachData(ifstream &filein, TREE &contact) {
+	while (filein.eof() == false) {
+		DATA data;
+		docData(filein, data);
+		insertData(contact, data);
+	}
+}
 
 int main() {
 	TREE contact = NULL;
 	NODE* pHead = NULL;
+	ifstream filein;
+	filein.open("input.txt", ios_base::in);
+	if(filein.fail()) {
+		cout << "\n\t\t\tDuong dan khong hop le";
+		return 0;
+	}
+	docDanhSachData(filein, contact);
+	filein.close();
 	Menu(contact, pHead);
 }
