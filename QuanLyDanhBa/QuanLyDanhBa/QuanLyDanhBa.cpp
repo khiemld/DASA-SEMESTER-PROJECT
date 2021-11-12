@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string>
 #include<fstream>
+#include<algorithm>
 using namespace std;
 
 struct DATE {
@@ -281,7 +282,11 @@ void deleteContact(TREE& contact, int sdtData) {
 void XuatDanhBaTheoTen(NODE* pHead) {
 	for (NODE* k = pHead; k != NULL; k = k->pNext) {
 		for (NODE* h = k->pNext; h != NULL; h = h->pNext) {
-			if (strcmp(k->data.ten.c_str(), h->data.ten.c_str()) > 0) {
+			string str1 = k->data.ten;
+			string str2 = h->data.ten;
+			transform(str1.begin(), str1.end(), str1.begin(), ::tolower);
+			transform(str2.begin(), str2.end(), str2.begin(), ::tolower);
+			if (str1.compare(str2) > 0) {
 				swap(k->data, h->data);
 			}
 		}
