@@ -321,7 +321,20 @@ void searchPhoneNumber(TREE& contact, int sdtData)
 		searchPhoneNumber(contact->right,sdtData); // và ở bên phải		
 	}
 }
-
+//Tim thong tin theo ten
+void SearchName(NODE*& data,string name,int x)
+{
+	if (data == NULL)
+		return;
+	NODE* p = data;
+	fflush(stdin);
+	string name2 = p->data.ten.substr(0,x);//  coppy n phan tu dau cua choi
+	if (name2.compare(name) == 0)// so sanh 2 chuoi
+	{
+		printDATA(p->data);
+	}
+	SearchName(p->pNext,name,x);
+}
 //Hàm xuất danh sách theo nhóm
 void printGroup(TREE contact, int maNhom) {
 	if (contact != NULL) {
@@ -331,7 +344,6 @@ void printGroup(TREE contact, int maNhom) {
 		printGroup(contact->right, maNhom);
 	}
 }
-
 
 void Menu(TREE& contact,NODE*& pHead) {
 	int luachon;
@@ -344,6 +356,7 @@ void Menu(TREE& contact,NODE*& pHead) {
 		cout << "\n\n\t\t4. Tim thong tin danh ba theo so dien thoai";
 		cout << "\n\n\t\t5. Xuat danh sach so dien thoai theo ten";
 		cout << "\n\n\t\t6. Xuat danh sach theo nhom";
+		cout << "\n\n\t\t7. Tim ten";
 		cout << "\n\n\t\t0. Ket thuc";
 		cout << "\n\n\t\t:::::::::::::::::::::::::::::::::::::::END:::::::::::::::::::::::::::::::::::::::::::::::";
 
@@ -408,8 +421,25 @@ void Menu(TREE& contact,NODE*& pHead) {
 			printGroup(contact, maNhom);
 			system("pause");
 		}
+		else if (luachon == 7) {
+			cout << "\n\t\t\tTIM KIEM THEO TEN";
+			BTStoLinkedList(contact, pHead);
+			cout << "\n\t\t\tNhap ten can tim : ";
+			string name;
+			fflush(stdin);
+			while (getchar() != '\n');
+			getline(cin, name);
+			int leng = name.length();
+			SearchName(pHead,name,leng);
+			NODE* tam = NULL;
+			while (pHead != NULL) {
+				tam = pHead;
+				pHead = pHead->pNext;
+				delete tam;
+			}
+			system("pause");
+		}
 		else if (luachon == 0) {
-
 			break;
 		}
 	}
