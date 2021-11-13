@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string>
 #include<fstream>
+#include<string.h>
 #include<algorithm>
 using namespace std;
 
@@ -349,18 +350,33 @@ string tachTen(string s) {
 }
 
 //Tim thong tin theo ten
-void SearchName(NODE*& data,string name,int x)
+void Chuyenkytu(string &s)
+{
+	for (int i = 0; i < s.length(); i++) {
+		if (s[i] >= 65 && s[i] <= 90)
+			s[i] = s[i] + 32;
+	}
+}
+void SearchName(NODE*& data, string name, int x,int &sl)
 {
 	if (data == NULL)
 		return;
 	NODE* p = data;
-	fflush(stdin);
-	string name2 = p->data.ten.substr(0,x);//  coppy n phan tu dau cua choi
-	if (name2.compare(name) == 0)// so sanh 2 chuoi
+
+	for (int i = 0; i <= p->data.ten.length()-x; i++)
 	{
-		printDATA(p->data);
+		string name2 = p->data.ten.substr(i, x);//  coppy n phan tu dau cua choi
+		Chuyenkytu(name2);
+		if (name2.compare(name) == 0)// so sanh 2 chuoi
+		{
+			printDATA(p->data);
+			sl++;
+			break;
+		}
+		fflush(stdin);
 	}
-	SearchName(p->pNext,name,x);
+	fflush(stdin);
+	SearchName(p->pNext, name, x,sl);
 }
 //Hàm xuất danh sách theo nhóm
 void printGroup(TREE contact, int maNhom) {
@@ -419,6 +435,7 @@ void Menu(TREE& contact,NODE*& pHead) {
 		else if (luachon == 4) {
 			cout << "\n\t\t\tTIM KIEM SO DIEN THOAI";
 			int sdtData;
+			
 			cout << "\n\t\tNhap so dien thoai ban can tim: ";
 			cin >> sdtData;
 			searchPhoneNumber(contact, sdtData);
@@ -456,13 +473,22 @@ void Menu(TREE& contact,NODE*& pHead) {
 			fflush(stdin);
 			while (getchar() != '\n');
 			getline(cin, name);
+			Chuyenkytu(name);
 			int leng = name.length();
-			SearchName(pHead,name,leng);
-			NODE* tam = NULL;
-			while (pHead != NULL) {
-				tam = pHead;
-				pHead = pHead->pNext;
-				delete tam;
+			int sl = 0;
+			SearchName(pHead, name, leng, sl);
+			if (sl != 0)
+			{
+				NODE* tam = NULL;
+				while (pHead != NULL) {
+					tam = pHead;
+					pHead = pHead->pNext;
+					delete tam;
+				}
+			}
+			else
+			{
+				cout << "\n\t\tKhong tim thay ten\n\n";
 			}
 			system("pause");
 		}
