@@ -300,17 +300,17 @@ void XuatDanhBaTheoTen(NODE* pHead) {
 }
 
 
-//Hàm tìm kiếm theo số điện thoại
-void searchPhoneNumber(TREE& contact, int sdtData)
+void searchPhoneNumber(TREE& contact, int sdtData, bool& flat)
 {
 	if (contact != NULL) {
 		string data = to_string(sdtData); // Convert số nhập vào sang kiểu string
 		string Contact = to_string(contact->data.SDT.sdt); //Convert số trong cây nhị phân sang kiểu string
 
 		if (data == Contact)
+		{
 			printDATA(contact->data); // Nếu số nhập vào trùng thì in thông tin danh bạ
-
-
+			flat = 1;
+		}
 		else {
 			int m = data.size();
 			int n = Contact.size();
@@ -321,12 +321,17 @@ void searchPhoneNumber(TREE& contact, int sdtData)
 					count++; //  thì ta tăng biến đếm
 
 				if (count == data.size()) // Nếu biến đếm trùng với kích thước của số nhập vào
+				{
 					printDATA(contact->data); // thì ta in thông tin danh bạ
+					flat = 1;
+				}
+
 			}
 		}
-		searchPhoneNumber(contact->left, sdtData); // Tiếp tục tìm kiếm các số trùng với số nhập vào ở bên trái
-		searchPhoneNumber(contact->right, sdtData); // và ở bên phải		
+		searchPhoneNumber(contact->left, sdtData, flat); // Tiếp tục tìm kiếm các số trùng với số nhập vào ở bên trái
+		searchPhoneNumber(contact->right, sdtData, flat); // và ở bên phải	
 	}
+
 }
 //Tim thong tin theo ten
 void Chuyenkytu(string& s)
@@ -414,10 +419,12 @@ void Menu(TREE& contact, NODE*& pHead) {
 		else if (luachon == 4) {
 			cout << "\n\t\t\tTIM KIEM SO DIEN THOAI";
 			int sdtData;
-
+			bool flat = 0;
 			cout << "\n\t\tNhap so dien thoai ban can tim: ";
 			cin >> sdtData;
-			searchPhoneNumber(contact, sdtData);
+			searchPhoneNumber(contact, sdtData, flat);
+			if (flat == 0)
+				cout << "\n\t\tSo dien thoai khong ton tai\n\n";
 			system("pause");
 		}
 		else if (luachon == 5) {

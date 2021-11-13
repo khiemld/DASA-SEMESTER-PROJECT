@@ -1,5 +1,4 @@
 ﻿  QuanLyDanhBa.cpp
-E:\2021\DASA - UTE\DASA-SEMESTER-PROJECT\QuanLyDanhBa\QuanLyDanhBa\QuanLyDanhBa.cpp(334,20): warning C4018: '<': signed/unsigned mismatch
-E:\2021\DASA - UTE\DASA-SEMESTER-PROJECT\QuanLyDanhBa\QuanLyDanhBa\QuanLyDanhBa.cpp(345,20): warning C4018: '<=': signed/unsigned mismatch
-  LINK : E:\2021\DASA - UTE\DASA-SEMESTER-PROJECT\QuanLyDanhBa\Debug\QuanLyDanhBa.exe not found or not built by the last incremental link; performing full link
+E:\2021\DASA - UTE\DASA-SEMESTER-PROJECT\QuanLyDanhBa\QuanLyDanhBa\QuanLyDanhBa.cpp(339,20): warning C4018: '<': signed/unsigned mismatch
+E:\2021\DASA - UTE\DASA-SEMESTER-PROJECT\QuanLyDanhBa\QuanLyDanhBa\QuanLyDanhBa.cpp(350,20): warning C4018: '<=': signed/unsigned mismatch
   QuanLyDanhBa.vcxproj -> E:\2021\DASA - UTE\DASA-SEMESTER-PROJECT\QuanLyDanhBa\Debug\QuanLyDanhBa.exe
