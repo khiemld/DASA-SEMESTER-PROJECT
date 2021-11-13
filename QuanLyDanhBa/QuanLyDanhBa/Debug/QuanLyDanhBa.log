@@ -1,3 +1,4 @@
 ﻿  QuanLyDanhBa.cpp
-  LINK : C:\Users\Admin\Documents\GitHub\DASA-SEMESTER-PROJECT\QuanLyDanhBa\Debug\QuanLyDanhBa.exe not found or not built by the last incremental link; performing full link
-  QuanLyDanhBa.vcxproj -> C:\Users\Admin\Documents\GitHub\DASA-SEMESTER-PROJECT\QuanLyDanhBa\Debug\QuanLyDanhBa.exe
+D:\git\tim ten\DASA-SEMESTER-PROJECT\QuanLyDanhBa\QuanLyDanhBa\QuanLyDanhBa.cpp(334,20): warning C4018: '<': signed/unsigned mismatch
+D:\git\tim ten\DASA-SEMESTER-PROJECT\QuanLyDanhBa\QuanLyDanhBa\QuanLyDanhBa.cpp(345,20): warning C4018: '<=': signed/unsigned mismatch
+  QuanLyDanhBa.vcxproj -> D:\git\tim ten\DASA-SEMESTER-PROJECT\QuanLyDanhBa\Debug\QuanLyDanhBa.exe
