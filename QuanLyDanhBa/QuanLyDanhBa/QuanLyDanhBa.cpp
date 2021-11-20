@@ -363,9 +363,37 @@ void SearchName(NODE*& data, string name, int x, int& sl)
 	SearchName(p->pNext, name, x, sl);
 }
 //Hàm chỉnh sưa thông tin
-void Chinhsua(NODE*& data, string name)
+void chuyendl(NODE*& p,TREE& contact,NODE*& data)
 {
-	if (data == NULL)
+	if (p->data.SDT.sdt == contact->data.SDT.sdt)
+	{
+		contact->data.diachi = data->data.diachi;
+		contact->data.email = data->data.email;
+		contact->data.ghiChu = data->data.ghiChu;
+		contact->data.gioiTinh = data->data.gioiTinh;
+		contact->data.ngaysinh.day = data->data.ngaysinh.day;
+		contact->data.ngaysinh.month = data->data.ngaysinh.month;
+		contact->data.ngaysinh.year = data->data.ngaysinh.year;
+		contact->data.nhom = data->data.nhom;
+		contact->data.SDT.sdt = data->data.SDT.sdt;
+		contact->data.ten = data->data.ten;
+	}
+	else
+	{
+		if (contact->left != NULL)
+		{
+			chuyendl(p, contact->left,data);
+		}
+		if (contact->right != NULL)
+		{
+			chuyendl(p, contact->right,data);
+		}
+	}
+}
+void Chinhsua(NODE*& data, string name,TREE& contact)
+{
+	NODE* p = data;
+	if (data == NULL || contact == NULL)
 		return;
 	string name2 = data->data.ten;
 	Chuyenkytu(name2);
@@ -397,12 +425,14 @@ void Chinhsua(NODE*& data, string name)
 				data->data.ten = name3;
 				//printDATA(data->data);
 				//system("pause");
+				
 			}
 			else if (yeucau == 2)
 			{
 				int newsdt;
 				cout << "\n\n\t\tNhap so dien thoai moi:  ";
 				cin >> newsdt;
+				
 				data->data.SDT.sdt = newsdt;
 				//printDATA(data->data);
 			//	system("pause");
@@ -414,6 +444,7 @@ void Chinhsua(NODE*& data, string name)
 				fflush(stdin);
 				while (getchar() != '\n');
 				getline(cin, newkeep);
+				
 				data->data.ghiChu = newkeep;
 			//	printDATA(data->data);
 			//	system("pause");
@@ -427,6 +458,7 @@ void Chinhsua(NODE*& data, string name)
 				cout << "\n\t\t\tNhap '3' chon Cong viec";
 				cout << "\n\t\tLua chon: ";
 				cin >> suanhom;
+				
 				data->data.nhom = suanhom;
 			//	printDATA(data->data);
 				//system("pause");
@@ -438,6 +470,7 @@ void Chinhsua(NODE*& data, string name)
 				fflush(stdin);
 				while (getchar() != '\n');
 				getline(cin, gioitinh);
+				
 				data->data.gioiTinh = gioitinh;
 			//	printDATA(data->data);
 				//system("pause");
@@ -449,13 +482,14 @@ void Chinhsua(NODE*& data, string name)
 				fflush(stdin);
 				while (getchar() != '\n');
 				getline(cin, newdiachi);
+				
 				data->data.diachi = newdiachi;
 			//	printDATA(data->data);
 			//	system("pause");
 			}
 			else if (yeucau == 7)
 			{
-				inputDateBirth(data->data.ngaysinh);
+				inputDateBirth(contact->data.ngaysinh);
 			//	printDATA(data->data);
 			//	system("pause");
 			}
@@ -465,6 +499,7 @@ void Chinhsua(NODE*& data, string name)
 				fflush(stdin);
 				while (getchar() != '\n');
 				getline(cin, newmail);
+				
 				data->data.email = newmail;
 				//printDATA(data->data);
 			//	system("pause");
@@ -474,11 +509,12 @@ void Chinhsua(NODE*& data, string name)
 				break;
 			}
 		}
+		chuyendl(p, contact,data);
 
 	}
 	else
 	{
-		Chinhsua(data->pNext, name);
+		Chinhsua(data->pNext, name,contact);
 	}
 }
 //Hàm xuất danh sách theo nhóm
@@ -490,7 +526,6 @@ void printGroup(TREE contact, int maNhom) {
 		printGroup(contact->right, maNhom);
 	}
 }
-
 void Menu(TREE& contact, NODE*& pHead) {
 	int luachon;
 	while (true) {
@@ -606,7 +641,7 @@ void Menu(TREE& contact, NODE*& pHead) {
 			while (getchar() != '\n');
 			getline(cin, name);
 			Chuyenkytu(name);
-			Chinhsua(pHead,name);
+			Chinhsua(pHead,name,contact);
 			NODE* tam = NULL;
 			while (pHead != NULL) {
 				tam = pHead;
