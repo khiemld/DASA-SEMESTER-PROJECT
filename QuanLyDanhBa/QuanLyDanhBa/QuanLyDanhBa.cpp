@@ -7,9 +7,9 @@
 using namespace std;
 
 struct DATE {
-	int day;
-	int month;
-	int year;
+	int day = 1;
+	int month = 1;
+	int year = 1;
 };
 
 struct SDT {
@@ -37,6 +37,7 @@ struct CONTACT { //Cây nhị phân tìm kiếm
 	DATA data;
 	CONTACT* right;
 	CONTACT* left;
+	int height; //Chiều cao của node
 };
 typedef CONTACT* TREE;
 
@@ -162,24 +163,111 @@ void BTStoLinkedList(TREE t, NODE*& pHead) {
 	}
 }
 
+CONTACT* newNode(DATA key)
+{
+	CONTACT* node = new CONTACT();
+	node->data = key;
+	node->left = NULL;
+	node->right = NULL;
+	node->height = 1; // new node is initially
+					  // added at leaf
+	return(node);
+}
+
+//Tìm giá trị lớn nhất của 2 NODE
+int max(int a, int b) {
+	return (a > b) ? a : b;
+}
+
+//Hàm tìm chiều cao của node
+int height(CONTACT* t) {
+	return t == NULL ? 0 : t->height;
+}
+
+
+//Xoay phải
+CONTACT* rightRotate(CONTACT* y)
+{
+	CONTACT* x = y->left;
+	CONTACT* T2 = x->right;
+
+	// Perform rotation
+	x->right = y;
+	y->left = T2;
+
+	// Update heights
+	y->height = max(height(y->left),
+		height(y->right)) + 1;
+	x->height = max(height(x->left),
+		height(x->right)) + 1;
+
+	// Return new root
+	return x;
+}
+//Xoay trái
+CONTACT* leftRotate(CONTACT* x)
+{
+	CONTACT* y = x->right;
+	CONTACT* T2 = y->left;
+
+	// Perform rotation
+	y->left = x;
+	x->right = T2;
+
+	// Update heights
+	x->height = max(height(x->left),
+		height(x->right)) + 1;
+	y->height = max(height(y->left),
+		height(y->right)) + 1;
+
+	// Return new root
+	return y;
+}
+
+
+//Tìm hệ số cân bằng của NODE = chiều cao cây con trái trừ chiều cao cây con phải
+int balanceFactor(CONTACT* t) {
+	return t == NULL ? 0 : (height(t->left) - height(t->right));
+}
 
 //Hàm thêm data
-void insertData(TREE& contact, DATA data) {
+CONTACT* insertData(TREE& contact, DATA data) {
 	if (contact == NULL) { //Nếu cây rỗng
-		CONTACT* p = new CONTACT;
-		p->data = data;
-		p->left = NULL;
-		p->right = NULL;
-		contact = p; //Thêm node p vào cây
+		return newNode(data);
 	}
-	else {
-		if (contact->data.SDT.sdt < data.SDT.sdt) {
-			insertData(contact->right, data);
-		}
-		else if (contact->data.SDT.sdt > data.SDT.sdt) {
-			insertData(contact->left, data);
-		}
+	if (contact->data.SDT.sdt < data.SDT.sdt) {
+		contact->right = insertData(contact->right, data);
 	}
+	else if (contact->data.SDT.sdt > data.SDT.sdt) {
+		contact->left = insertData(contact->left, data);
+	}
+	
+	//Cập nhật lại hệ số cân bằng và cây cân bằng
+	contact->height = 1 + max(height(contact->left), height(contact->right));
+	int balance = balanceFactor(contact);
+	// Left Left Case
+	if (balance > 1 && data.SDT.sdt < contact->left->data.SDT.sdt)
+		return rightRotate(contact);
+
+	// Right Right Case
+	if (balance < -1 && data.SDT.sdt > contact->right->data.SDT.sdt)
+		return leftRotate(contact);
+
+	// Left Right Case
+	if (balance > 1 && data.SDT.sdt > contact->left->data.SDT.sdt)
+	{
+		contact->left = leftRotate(contact->left);
+		return rightRotate(contact);
+	}
+
+	// Right Left Case
+	if (balance < -1 && data.SDT.sdt < contact->right->data.SDT.sdt)
+	{
+		contact->right = rightRotate(contact->right);
+		return leftRotate(contact);
+	}
+	/* return the (unchanged) node pointer */
+	return contact;
 }
 
 //Hàm xuất thông tin
@@ -241,43 +329,62 @@ bool kiemTraTonTai(TREE contact, int sdtData)
 }
 
 //Xóa
-void timNODEThayThe(CONTACT*& X, CONTACT*& Y) { //Tìm NODE trái nhất của cây con phải
-	if (Y->left != NULL) {
-		timNODEThayThe(X, Y->left);
-	}
-	else {
-		X->data = Y->data;
-		X = Y; // X giữ địa chỉ NODE cần xóa
-		Y = Y->right;
-	}
+CONTACT* find_minValue(CONTACT* node) {
+	CONTACT* current = node;
+	while (current->left != NULL)
+		current = current->left;
+	return current;
 }
 
-void deleteContact(TREE& contact, int sdtData) {
-	if (contact == NULL) {
-		return;
-	}
+CONTACT* deleteContact(TREE& contact, int sdtData) {
+	if (contact == NULL)
+		return contact;
+	if (sdtData < contact->data.SDT.sdt)
+		contact->left = deleteContact(contact->left, sdtData);
+	else if (sdtData > contact->data.SDT.sdt)
+		contact->right = deleteContact(contact->right, sdtData);
 	else {
-		if (contact->data.SDT.sdt < sdtData) {
-			deleteContact(contact->right, sdtData);
-		}
-		else if (contact->data.SDT.sdt > sdtData) {
-			deleteContact(contact->right, sdtData);
+		if ((contact->left == NULL) || (contact->right == NULL)) {
+			CONTACT* temp = contact->left ? contact->left : contact->right;
+			if (temp == NULL) {
+				temp = contact;
+				contact = NULL;
+			}
+			else
+				*contact = *temp;
+			free(temp);
 		}
 		else {
-			CONTACT* temp = contact; // temp tạm giữ NODE contact cần xóa
-			if (contact->left == NULL) {
-				contact = contact->right;
-			}
-			else if (contact->right == NULL) {
-				contact = contact->left;
-			}
-			else {
-				//Tìm NODE trái nhất của của cây con phải
-				timNODEThayThe(temp, contact->right);
-			}
-			delete temp;
+			CONTACT* temp = find_minValue(contact->right);
+			contact->data = temp->data;
+			contact->right = deleteContact(contact->right, temp->data.SDT.sdt);
 		}
 	}
+
+	if (contact == NULL)
+		return contact;
+	// Cập nhật hệ số cân bằng
+	contact->height = 1 + max(height(contact->left),
+		height(contact->right));
+	int balance = balanceFactor(contact);
+	if (balance > 1 && balanceFactor(contact->left) >= 0)
+		return rightRotate(contact);
+
+	if (balance > 1 && balanceFactor(contact->left) < 0) {
+		contact->left = leftRotate(contact->left);
+		return rightRotate(contact);
+	}
+
+	if (balance < -1 && balanceFactor(contact->right) <= 0)
+		return leftRotate(contact);
+
+	if (balance < -1 && balanceFactor(contact->right) > 0) {
+		contact->right = rightRotate(contact->right);
+		return leftRotate(contact);
+	}
+	return contact;
+
+		
 }
 
 void XuatDanhBaTheoTen(NODE* pHead) {
@@ -513,7 +620,7 @@ void Menu(TREE& contact, NODE*& pHead) {
 			cout << "\n\t\t\tTHEM THONG TIN SO DIEN THOAI\n";
 			DATA data;
 			inputDATA(data);
-			insertData(contact, data);
+			contact = insertData(contact, data);
 		}
 		else if (luachon == 2) {
 			cout << "\n\t\t\tXOA THONG TIN SO DIEN THOAI\n\n";
@@ -521,7 +628,7 @@ void Menu(TREE& contact, NODE*& pHead) {
 			cout << "\n\t\tNhap so dien thoai can xoa: ";
 			cin >> sdtData;
 			if (kiemTraTonTai(contact, sdtData)) { //Kiểm tra số điện thoại cần xóa có tồn tại hay không
-				deleteContact(contact, sdtData);
+				contact = deleteContact(contact, sdtData);
 				cout << "\n\t\tDeleted................\n";
 				system("pause");
 			}
@@ -643,13 +750,13 @@ void docDanhSachData(ifstream& filein, TREE& contact) {
 int main() {
 	TREE contact = NULL;
 	NODE* pHead = NULL;
-	ifstream filein;
+	/*ifstream filein;
 	filein.open("input.txt", ios_base::in);
 	if (filein.fail()) {
 		cout << "\n\t\t\tDuong dan khong hop le";
 		return 0;
 	}
 	docDanhSachData(filein, contact);
-	filein.close();
+	filein.close();*/
 	Menu(contact, pHead);
 }
