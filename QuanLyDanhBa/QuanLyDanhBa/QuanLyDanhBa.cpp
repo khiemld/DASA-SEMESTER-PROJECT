@@ -469,19 +469,50 @@ void SearchName(NODE*& data, string name, int x, int& sl)
 	fflush(stdin);
 	SearchName(p->pNext, name, x, sl);
 }
-//Hàm chỉnh sưa thông tin
-void Chinhsua(NODE*& data, string name)
+
+// Ham so sanh so lon
+bool sosanh(TREE a, TREE b)
 {
-	if (data == NULL)
+	string A = to_string(a->data.SDT.sdt); // chuyen du lieu sang dang string
+	string B = to_string(b->data.SDT.sdt);
+	int x = A.length(), y = B.length();
+	// so sanh neu sdt cay a lon hon thi tra ve true nguoc lai cay b lon hon thi tra ve false
+	if (x > y) // neu chuoi A dai hon chuoi B
+	{
+		return true;
+	}
+	else if (x < y)// Chuoi B dai hon chuoi A
+	{
+		return false;
+	}
+	else {
+		for (int i = 0; i < x; i++) // so sanh tung phan tu
+		{
+			if (A[i] > B[i])
+			{
+				return true;
+			}
+			else if (A[i] < B[i])
+			{
+				return false;
+			}
+		}
+	}
+}
+// Ham chinh sua thong tin
+void Chinhsua(string name, TREE& contact)
+{
+
+	if (contact == NULL)
 		return;
-	string name2 = data->data.ten;
+	string name2 = contact->data.ten;
 	Chuyenkytu(name2);
 	if (name2.compare(name) == 0)
 	{
 		int yeucau;
 		while (true) {
 			system("cls");
-			printDATA(data->data);
+			printDATA(contact->data);
 			cout << "\n\n\t\t:::::::::::::::::CHON THONG TIN CAN CHINH SUA:::::::::::::::::::::";
 			cout << "\n\n\t\t1. Ten";
 			cout << "\n\n\t\t2. So dien thoai";
@@ -501,18 +532,16 @@ void Chinhsua(NODE*& data, string name)
 				fflush(stdin);
 				while (getchar() != '\n');
 				getline(cin, name3);
-				data->data.ten = name3;
-				//printDATA(data->data);
-				//system("pause");
+				contact->data.ten = name3;
+
 			}
 			else if (yeucau == 2)
 			{
 				int newsdt;
 				cout << "\n\n\t\tNhap so dien thoai moi:  ";
 				cin >> newsdt;
-				data->data.SDT.sdt = newsdt;
-				//printDATA(data->data);
-			//	system("pause");
+
+				contact->data.SDT.sdt = newsdt;
 			}
 			else if (yeucau == 3)
 			{
@@ -521,9 +550,8 @@ void Chinhsua(NODE*& data, string name)
 				fflush(stdin);
 				while (getchar() != '\n');
 				getline(cin, newkeep);
-				data->data.ghiChu = newkeep;
-			//	printDATA(data->data);
-			//	system("pause");
+
+				contact->data.ghiChu = newkeep;
 			}
 			else if (yeucau == 4)
 			{
@@ -534,9 +562,8 @@ void Chinhsua(NODE*& data, string name)
 				cout << "\n\t\t\tNhap '3' chon Cong viec";
 				cout << "\n\t\tLua chon: ";
 				cin >> suanhom;
-				data->data.nhom = suanhom;
-			//	printDATA(data->data);
-				//system("pause");
+
+				contact->data.nhom = suanhom;
 			}
 			else if (yeucau == 5)
 			{
@@ -545,9 +572,8 @@ void Chinhsua(NODE*& data, string name)
 				fflush(stdin);
 				while (getchar() != '\n');
 				getline(cin, gioitinh);
-				data->data.gioiTinh = gioitinh;
-			//	printDATA(data->data);
-				//system("pause");
+
+				contact->data.gioiTinh = gioitinh;
 			}
 			else if (yeucau == 6)
 			{
@@ -556,15 +582,12 @@ void Chinhsua(NODE*& data, string name)
 				fflush(stdin);
 				while (getchar() != '\n');
 				getline(cin, newdiachi);
-				data->data.diachi = newdiachi;
-			//	printDATA(data->data);
-			//	system("pause");
+
+				contact->data.diachi = newdiachi;
 			}
 			else if (yeucau == 7)
 			{
-				inputDateBirth(data->data.ngaysinh);
-			//	printDATA(data->data);
-			//	system("pause");
+				inputDateBirth(contact->data.ngaysinh);
 			}
 			else if (yeucau == 8) {
 				string newmail;
@@ -572,20 +595,25 @@ void Chinhsua(NODE*& data, string name)
 				fflush(stdin);
 				while (getchar() != '\n');
 				getline(cin, newmail);
-				data->data.email = newmail;
-				//printDATA(data->data);
-			//	system("pause");
+
+				contact->data.email = newmail;
 			}
 			else if (yeucau == 0)
 			{
 				break;
 			}
 		}
-
 	}
 	else
 	{
-		Chinhsua(data->pNext, name);
+		if (contact->left != NULL)
+		{
+			Chinhsua(name, contact->left);
+		}
+		if (contact->right != NULL)
+		{
+			Chinhsua(name, contact->right);
+		}
 	}
 }
 //Hàm xuất danh sách theo nhóm
@@ -706,20 +734,13 @@ void Menu(TREE& contact, NODE*& pHead) {
 		}
 		else if (luachon == 8) {
 			cout << "\n\t\t\tCHINH SUA THONG TIN DANH BA";
-			BTStoLinkedList(contact, pHead);
 			cout << "\n\t\t\tNhap ten nguoi can chinh sua : ";
 			string name;
 			fflush(stdin);
 			while (getchar() != '\n');
 			getline(cin, name);
 			Chuyenkytu(name);
-			Chinhsua(pHead,name);
-			NODE* tam = NULL;
-			while (pHead != NULL) {
-				tam = pHead;
-				pHead = pHead->pNext;
-				delete tam;
-			}
+			Chinhsua(name, contact);
 			system("pause");
 			
 		}
