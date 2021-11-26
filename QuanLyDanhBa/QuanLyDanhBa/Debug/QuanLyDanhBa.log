@@ -1,4 +1,5 @@
 ﻿  QuanLyDanhBa.cpp
-E:\2021\DASA - UTE\DASA-SEMESTER-PROJECT\QuanLyDanhBa\QuanLyDanhBa\QuanLyDanhBa.cpp(471,20): warning C4018: '<': signed/unsigned mismatch
-E:\2021\DASA - UTE\DASA-SEMESTER-PROJECT\QuanLyDanhBa\QuanLyDanhBa\QuanLyDanhBa.cpp(482,20): warning C4018: '<=': signed/unsigned mismatch
-  QuanLyDanhBa.vcxproj -> E:\2021\DASA - UTE\DASA-SEMESTER-PROJECT\QuanLyDanhBa\Debug\QuanLyDanhBa.exe
+E:\ToiUu\DASA-SEMESTER-PROJECT\QuanLyDanhBa\QuanLyDanhBa\QuanLyDanhBa.cpp(446,20): warning C4018: '<': signed/unsigned mismatch
+E:\ToiUu\DASA-SEMESTER-PROJECT\QuanLyDanhBa\QuanLyDanhBa\QuanLyDanhBa.cpp(457,20): warning C4018: '<=': signed/unsigned mismatch
+E:\ToiUu\DASA-SEMESTER-PROJECT\QuanLyDanhBa\QuanLyDanhBa\QuanLyDanhBa.cpp(501): warning C4715: 'sosanh': not all control paths return a value
+  QuanLyDanhBa.vcxproj -> E:\ToiUu\DASA-SEMESTER-PROJECT\QuanLyDanhBa\Debug\QuanLyDanhBa.exe
