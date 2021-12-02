@@ -1,4 +1,3 @@
 ﻿  QuanLyDanhBa.cpp
-E:\2021\DASA - UTE\DASA-SEMESTER-PROJECT\QuanLyDanhBa\QuanLyDanhBa\QuanLyDanhBa.cpp(471,20): warning C4018: '<': signed/unsigned mismatch
-E:\2021\DASA - UTE\DASA-SEMESTER-PROJECT\QuanLyDanhBa\QuanLyDanhBa\QuanLyDanhBa.cpp(482,20): warning C4018: '<=': signed/unsigned mismatch
+E:\2021\DASA - UTE\DASA-SEMESTER-PROJECT\QuanLyDanhBa\QuanLyDanhBa\QuanLyDanhBa.cpp(357,20): warning C4018: '<': signed/unsigned mismatch
   QuanLyDanhBa.vcxproj -> E:\2021\DASA - UTE\DASA-SEMESTER-PROJECT\QuanLyDanhBa\Debug\QuanLyDanhBa.exe

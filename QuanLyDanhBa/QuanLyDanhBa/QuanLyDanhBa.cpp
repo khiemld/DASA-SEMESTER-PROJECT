@@ -6,26 +6,13 @@
 #include<algorithm>
 using namespace std;
 
-struct DATE {
-	int day = 1;
-	int month = 1;
-	int year = 1;
-};
-
-struct SDT {
-	int sdt;
-	string loai;
-};
-
 struct DATA {
-	SDT  SDT;
-	string ten;
+	int SDT;
+
+	char ten[50];
 	int nhom; //1: Gia dinh, 2: Ban be, 3: Cong viec
-	string gioiTinh;
-	string diachi;
-	DATE ngaysinh;
-	string email;
-	string ghiChu;
+	char gioiTinh[50];
+	char diachi[50];
 };
 
 struct NODE {
@@ -41,92 +28,24 @@ struct CONTACT { //Cây nhị phân tìm kiếm
 };
 typedef CONTACT* TREE;
 
-
-//Hàm tách 3 số đầu của số điện thoại
-int tachSoDau(int sdt) {
-	int dem = 1;
-	while (dem <= 7) {
-		sdt /= 10;
-		dem++;
-	}
-	return sdt;
-}
-
-//Hàm nhập thông điện thoại
-void inputPhoneNumber(SDT& dt) {
-	/*cout << "\tNhập mã nước: ";
-	cin >> dt.maQuocGia;*/
-	cout << "\t\tNhap so dien thoai: ";
-	cin >> dt.sdt;
-	int soDau = tachSoDau(dt.sdt);
-	if (soDau == 86 || soDau == 96 || soDau == 97 || soDau == 98 || soDau == 32 || soDau == 33 || soDau == 34 || soDau == 35
-		|| soDau == 36 || soDau == 37 || soDau == 38 || soDau == 39)
-		dt.loai = "Viettel";
-	else if (soDau == 88 || soDau == 91 || soDau == 94 || soDau == 83 || soDau == 84 || soDau == 85 || soDau == 81 || soDau == 82)
-		dt.loai = "Vinaphone";
-	else if (soDau == 89 || soDau == 90 || soDau == 93 || soDau == 70 || soDau == 79 || soDau == 77 || soDau == 76 || soDau == 78)
-		dt.loai = "Mobiphone";
-	else if (soDau == 92 || soDau == 56 || soDau == 58)
-		dt.loai = "Vietnammobile";
-}
-
-//Hàm nhập ngày sinh
-void inputDateBirth(DATE& date) {
-	cout << "\t\tNhap ngay sinh: ";
-	cin >> date.day;
-	cout << "\t\tNhap thang sinh: ";
-	cin >> date.month;
-	cout << "\t\tNhap nam sinh: ";
-	cin >> date.year;
-}
-
 //Hàm nhập thông tin DATA
 void inputDATA(DATA& x) {
+	cout << "\t\tNhap so dien thoai: ";
+	cin >> x.SDT;
 	while (getchar() != '\n');
 	cout << "\t\tNhap ten: ";
-	getline(cin, x.ten);
+	cin.getline(x.ten, 50);
 	cout << "\t\tGioi tinh: ";
-	getline(cin, x.gioiTinh);
-	inputPhoneNumber(x.SDT);
-	while (getchar() != '\n');
+	cin.getline(x.gioiTinh, 50);
 	cout << "\t\tDia chi: ";
-	getline(cin, x.diachi);
-	inputDateBirth(x.ngaysinh);
+	cin.getline(x.diachi, 50);
+	//inputDateBirth(x.ngaysinh);
 	cout << "\t\tChon nhom";
 	cout << "\n\t\t\tNhap '1' chon Gia dinh";
 	cout << "\n\t\t\tNhap '2' chon Ban be";
 	cout << "\n\t\t\tNhap '3' chon Cong viec";
 	cout << "\n\t\tLua chon: ";
 	cin >> x.nhom;
-	while (getchar() != '\n');
-	string ktMail;
-	do {
-		cout << "\t\tBan co muon nhap email <y/n>?";
-		getline(cin, ktMail);
-		if (ktMail == "y") {
-			cout << "\t\tEmail: ";
-			getline(cin, x.email);
-			break;
-		}
-		else if (ktMail == "n") {
-			x.email = "";
-			break;
-		}
-	} while (ktMail != "y" && ktMail != "n");
-	string ktNote;
-	do {
-		cout << "\t\tBan co them ghi chu <y/n>?";
-		getline(cin, ktNote);
-		if (ktNote == "y") {
-			cout << "\t\tGhi chu: ";
-			getline(cin, x.ghiChu);
-			break;
-		}
-		else if (ktNote == "n") {
-			x.ghiChu = "";
-			break;
-		}
-	} while (ktNote != "y" && ktNote != "n");
 }
 
 //Khỏi tạo Node
@@ -169,8 +88,7 @@ CONTACT* newNode(DATA key)
 	node->data = key;
 	node->left = NULL;
 	node->right = NULL;
-	node->height = 1; // new node is initially
-					  // added at leaf
+	node->height = 1; 
 	return(node);
 }
 
@@ -235,10 +153,10 @@ CONTACT* insertData(TREE& contact, DATA data) {
 	if (contact == NULL) { //Nếu cây rỗng
 		return newNode(data);
 	}
-	if (contact->data.SDT.sdt < data.SDT.sdt) {
+	if (contact->data.SDT < data.SDT) {
 		contact->right = insertData(contact->right, data);
 	}
-	else if (contact->data.SDT.sdt > data.SDT.sdt) {
+	else if (contact->data.SDT > data.SDT) {
 		contact->left = insertData(contact->left, data);
 	}
 	
@@ -246,38 +164,35 @@ CONTACT* insertData(TREE& contact, DATA data) {
 	contact->height = 1 + max(height(contact->left), height(contact->right));
 	int balance = balanceFactor(contact);
 	// Left Left Case
-	if (balance > 1 && data.SDT.sdt < contact->left->data.SDT.sdt)
+	if (balance > 1 && data.SDT < contact->left->data.SDT)
 		return rightRotate(contact);
 
 	// Right Right Case
-	if (balance < -1 && data.SDT.sdt > contact->right->data.SDT.sdt)
+	if (balance < -1 && data.SDT > contact->right->data.SDT)
 		return leftRotate(contact);
 
 	// Left Right Case
-	if (balance > 1 && data.SDT.sdt > contact->left->data.SDT.sdt)
+	if (balance > 1 && data.SDT > contact->left->data.SDT)
 	{
 		contact->left = leftRotate(contact->left);
 		return rightRotate(contact);
 	}
 
 	// Right Left Case
-	if (balance < -1 && data.SDT.sdt < contact->right->data.SDT.sdt)
+	if (balance < -1 && data.SDT < contact->right->data.SDT)
 	{
 		contact->right = rightRotate(contact->right);
 		return leftRotate(contact);
 	}
-	/* return the (unchanged) node pointer */
 	return contact;
 }
 
 //Hàm xuất thông tin
 void printDATA(DATA data) {
 	cout << "\n\t\tTen: " << data.ten;
-	cout << "\n\t\tSo dien thoai: 0" << data.SDT.sdt;
-	cout << "\n\t\tNha mang: " << data.SDT.loai;
+	cout << "\n\t\tSo dien thoai: 0" << data.SDT;
 	cout << "\n\t\tGioi tinh: " << data.gioiTinh;
 	cout << "\n\t\tDia chi: " << data.diachi;
-	cout << "\n\t\tNgay sinh: " << data.ngaysinh.day << "/" << data.ngaysinh.month << "/" << data.ngaysinh.year;
 	if (data.nhom == 1) {
 		cout << "\n\t\tNhom: Gia dinh";
 	}
@@ -287,10 +202,6 @@ void printDATA(DATA data) {
 	else if (data.nhom == 3) {
 		cout << "\n\t\tNhom: Cong viec";
 	}
-	if (data.email != "")
-		cout << "\n\t\tEmail: " << data.email;
-	if (data.ghiChu != "")
-		cout << "\n\t\tGhi chu: " << data.ghiChu;
 	cout << "\n";
 }
 
@@ -312,15 +223,15 @@ bool kiemTraTonTai(TREE contact, int sdtData)
 	}
 	else
 	{
-		if (sdtData == contact->data.SDT.sdt)
+		if (sdtData == contact->data.SDT)
 		{
 			return true;
 		}
-		else if (sdtData > contact->data.SDT.sdt)
+		else if (sdtData > contact->data.SDT)
 		{
 			return	kiemTraTonTai(contact->right, sdtData);
 		}
-		else if (sdtData < contact->data.SDT.sdt)
+		else if (sdtData < contact->data.SDT)
 		{
 			return kiemTraTonTai(contact->left, sdtData);
 		}
@@ -339,9 +250,9 @@ CONTACT* find_minValue(CONTACT* node) {
 CONTACT* deleteContact(TREE& contact, int sdtData) {
 	if (contact == NULL)
 		return contact;
-	if (sdtData < contact->data.SDT.sdt)
+	if (sdtData < contact->data.SDT)
 		contact->left = deleteContact(contact->left, sdtData);
-	else if (sdtData > contact->data.SDT.sdt)
+	else if (sdtData > contact->data.SDT)
 		contact->right = deleteContact(contact->right, sdtData);
 	else {
 		if ((contact->left == NULL) || (contact->right == NULL)) {
@@ -357,7 +268,7 @@ CONTACT* deleteContact(TREE& contact, int sdtData) {
 		else {
 			CONTACT* temp = find_minValue(contact->right);
 			contact->data = temp->data;
-			contact->right = deleteContact(contact->right, temp->data.SDT.sdt);
+			contact->right = deleteContact(contact->right, temp->data.SDT);
 		}
 	}
 
@@ -411,7 +322,7 @@ void searchPhoneNumber(TREE& contact, int sdtData, bool& flat)
 {
 	if (contact != NULL) {
 		string data = to_string(sdtData); // Convert số nhập vào sang kiểu string
-		string Contact = to_string(contact->data.SDT.sdt); //Convert số trong cây nhị phân sang kiểu string
+		string Contact = to_string(contact->data.SDT); //Convert số trong cây nhị phân sang kiểu string
 
 		if (data == Contact)
 		{
@@ -448,146 +359,177 @@ void Chuyenkytu(string& s)
 			s[i] = s[i] + 32;
 	}
 }
-void SearchName(NODE*& data, string name, int x, int& sl)
-{
-	if (data == NULL)
-		return;
-	NODE* p = data;
+//void SearchName(NODE*& data, string name, int x, int& sl)
+//{
+//	if (data == NULL)
+//		return;
+//	NODE* p = data;
+//
+//	for (int i = 0; i <= p->data.ten.length()-x ; i++)
+//	{
+//		string name2 = p->data.ten.substr(i, x);//  coppy n phan tu dau cua choi
+//		Chuyenkytu(name2);
+//		if (name2.compare(name) == 0)// so sanh 2 chuoi
+//		{
+//			printDATA(p->data);
+//			sl++;
+//			break;
+//		}
+//		fflush(stdin);
+//	}
+//	fflush(stdin);
+//	SearchName(p->pNext, name, x, sl);
+//}
+//void chuyendl(NODE*& p, TREE& contact, NODE*& data)
+//{
+//	if (p->data.SDT == contact->data.SDT)
+//	{
+//		contact->data.diachi = data->data.diachi;
+//		contact->data.gioiTinh = data->data.gioiTinh;
+//		contact->data.nhom = data->data.nhom;
+//		contact->data.SDT = data->data.SDT;
+//		contact->data.ten = data->data.ten;
+//	}
+//	else
+//	{
+//		if (contact->left != NULL)
+//		{
+//			chuyendl(p, contact->left, data);
+//		}
+//		if (contact->right != NULL)
+//		{
+//			chuyendl(p, contact->right, data);
+//		}
+//	}
+//}
 
-	for (int i = 0; i <= p->data.ten.length()-x ; i++)
-	{
-		string name2 = p->data.ten.substr(i, x);//  coppy n phan tu dau cua choi
-		Chuyenkytu(name2);
-		if (name2.compare(name) == 0)// so sanh 2 chuoi
-		{
-			printDATA(p->data);
-			sl++;
-			break;
-		}
-		fflush(stdin);
-	}
-	fflush(stdin);
-	SearchName(p->pNext, name, x, sl);
-}
-//Hàm chỉnh sưa thông tin
-void Chinhsua(NODE*& data, string name)
-{
-	if (data == NULL)
-		return;
-	string name2 = data->data.ten;
-	Chuyenkytu(name2);
-	if (name2.compare(name) == 0)
-	{
-		int yeucau;
-		while (true) {
-			system("cls");
-			printDATA(data->data);
-			cout << "\n\n\t\t:::::::::::::::::CHON THONG TIN CAN CHINH SUA:::::::::::::::::::::";
-			cout << "\n\n\t\t1. Ten";
-			cout << "\n\n\t\t2. So dien thoai";
-			cout << "\n\n\t\t3. Ghi chu";
-			cout << "\n\n\t\t4. Nhom";
-			cout << "\n\n\t\t5. Gioi tinh";
-			cout << "\n\n\t\t6. Dia Chi";
-			cout << "\n\n\t\t7. Ngay sinh";
-			cout << "\n\n\t\t8. email";
-			cout << "\n\n\t\t0. Ket thuc";
-			cout << "\n\n\t\t\t Chon chuc nang: ";
-			cin >> yeucau;
-			if (yeucau == 1)
-			{
-				string name3;
-				cout << "\n\n\t\tNhap Ten Moi:  ";
-				fflush(stdin);
-				while (getchar() != '\n');
-				getline(cin, name3);
-				data->data.ten = name3;
-				//printDATA(data->data);
-				//system("pause");
-			}
-			else if (yeucau == 2)
-			{
-				int newsdt;
-				cout << "\n\n\t\tNhap so dien thoai moi:  ";
-				cin >> newsdt;
-				data->data.SDT.sdt = newsdt;
-				//printDATA(data->data);
-			//	system("pause");
-			}
-			else if (yeucau == 3)
-			{
-				string newkeep;
-				cout << "\n\n\t\tNhap ghi chu:  ";
-				fflush(stdin);
-				while (getchar() != '\n');
-				getline(cin, newkeep);
-				data->data.ghiChu = newkeep;
-			//	printDATA(data->data);
-			//	system("pause");
-			}
-			else if (yeucau == 4)
-			{
-				int suanhom;
-				cout << "\t\tChon nhom: ";
-				cout << "\n\t\t\tNhap '1' chon Gia dinh";
-				cout << "\n\t\t\tNhap '2' chon Ban be";
-				cout << "\n\t\t\tNhap '3' chon Cong viec";
-				cout << "\n\t\tLua chon: ";
-				cin >> suanhom;
-				data->data.nhom = suanhom;
-			//	printDATA(data->data);
-				//system("pause");
-			}
-			else if (yeucau == 5)
-			{
-				string gioitinh;
-				cout << "\n\n\t\tNhap gioi tinh:  ";
-				fflush(stdin);
-				while (getchar() != '\n');
-				getline(cin, gioitinh);
-				data->data.gioiTinh = gioitinh;
-			//	printDATA(data->data);
-				//system("pause");
-			}
-			else if (yeucau == 6)
-			{
-				string newdiachi;
-				cout << "\n\n\t\tNhap dia chi:  ";
-				fflush(stdin);
-				while (getchar() != '\n');
-				getline(cin, newdiachi);
-				data->data.diachi = newdiachi;
-			//	printDATA(data->data);
-			//	system("pause");
-			}
-			else if (yeucau == 7)
-			{
-				inputDateBirth(data->data.ngaysinh);
-			//	printDATA(data->data);
-			//	system("pause");
-			}
-			else if (yeucau == 8) {
-				string newmail;
-				cout << "\n\n\t\tNhap email:  ";
-				fflush(stdin);
-				while (getchar() != '\n');
-				getline(cin, newmail);
-				data->data.email = newmail;
-				//printDATA(data->data);
-			//	system("pause");
-			}
-			else if (yeucau == 0)
-			{
-				break;
-			}
-		}
-
-	}
-	else
-	{
-		Chinhsua(data->pNext, name);
-	}
-}
+//void Chinhsua(NODE*& data, string name, TREE& contact)
+//{
+//	NODE* p = data;
+//	if (data == NULL || contact == NULL)
+//		return;
+//	string name2 = data->data.ten;
+//	Chuyenkytu(name2);
+//	if (name2.compare(name) == 0)
+//	{
+//		int yeucau;
+//		while (true) {
+//			system("cls");
+//			printDATA(data->data);
+//			cout << "\n\n\t\t:::::::::::::::::CHON THONG TIN CAN CHINH SUA:::::::::::::::::::::";
+//			cout << "\n\n\t\t1. Ten";
+//			cout << "\n\n\t\t2. So dien thoai";
+//			cout << "\n\n\t\t3. Ghi chu";
+//			cout << "\n\n\t\t4. Nhom";
+//			cout << "\n\n\t\t5. Gioi tinh";
+//			cout << "\n\n\t\t6. Dia Chi";
+//			cout << "\n\n\t\t7. Ngay sinh";
+//			cout << "\n\n\t\t8. email";
+//			cout << "\n\n\t\t0. Ket thuc";
+//			cout << "\n\n\t\t\t Chon chuc nang: ";
+//			cin >> yeucau;
+//			if (yeucau == 1)
+//			{
+//				string name3;
+//				cout << "\n\n\t\tNhap Ten Moi:  ";
+//				fflush(stdin);
+//				while (getchar() != '\n');
+//				getline(cin, name3);
+//				data->data.ten = name3;
+//				//printDATA(data->data);
+//				//system("pause");
+//
+//			}
+//			else if (yeucau == 2)
+//			{
+//				int newsdt;
+//				cout << "\n\n\t\tNhap so dien thoai moi:  ";
+//				cin >> newsdt;
+//
+//				data->data.SDT.sdt = newsdt;
+//				//printDATA(data->data);
+//			//	system("pause");
+//			}
+//			else if (yeucau == 3)
+//			{
+//				string newkeep;
+//				cout << "\n\n\t\tNhap ghi chu:  ";
+//				fflush(stdin);
+//				while (getchar() != '\n');
+//				getline(cin, newkeep);
+//
+//				data->data.ghiChu = newkeep;
+//				//	printDATA(data->data);
+//				//	system("pause");
+//			}
+//			else if (yeucau == 4)
+//			{
+//				int suanhom;
+//				cout << "\t\tChon nhom: ";
+//				cout << "\n\t\t\tNhap '1' chon Gia dinh";
+//				cout << "\n\t\t\tNhap '2' chon Ban be";
+//				cout << "\n\t\t\tNhap '3' chon Cong viec";
+//				cout << "\n\t\tLua chon: ";
+//				cin >> suanhom;
+//
+//				data->data.nhom = suanhom;
+//				//	printDATA(data->data);
+//					//system("pause");
+//			}
+//			else if (yeucau == 5)
+//			{
+//				string gioitinh;
+//				cout << "\n\n\t\tNhap gioi tinh:  ";
+//				fflush(stdin);
+//				while (getchar() != '\n');
+//				getline(cin, gioitinh);
+//
+//				data->data.gioiTinh = gioitinh;
+//				//	printDATA(data->data);
+//					//system("pause");
+//			}
+//			else if (yeucau == 6)
+//			{
+//				string newdiachi;
+//				cout << "\n\n\t\tNhap dia chi:  ";
+//				fflush(stdin);
+//				while (getchar() != '\n');
+//				getline(cin, newdiachi);
+//
+//				data->data.diachi = newdiachi;
+//				//	printDATA(data->data);
+//				//	system("pause");
+//			}
+//			else if (yeucau == 7)
+//			{
+//				inputDateBirth(contact->data.ngaysinh);
+//				//	printDATA(data->data);
+//				//	system("pause");
+//			}
+//			else if (yeucau == 8) {
+//				string newmail;
+//				cout << "\n\n\t\tNhap email:  ";
+//				fflush(stdin);
+//				while (getchar() != '\n');
+//				getline(cin, newmail);
+//
+//				data->data.email = newmail;
+//				//printDATA(data->data);
+//			//	system("pause");
+//			}
+//			else if (yeucau == 0)
+//			{
+//				break;
+//			}
+//		}
+//		chuyendl(p, contact, data);
+//
+//	}
+//	else
+//	{
+//		Chinhsua(data->pNext, name, contact);
+//	}
+//}
 //Hàm xuất danh sách theo nhóm
 void printGroup(TREE contact, int maNhom) {
 	if (contact != NULL) {
@@ -598,7 +540,31 @@ void printGroup(TREE contact, int maNhom) {
 	}
 }
 
-void Menu(TREE& contact, NODE*& pHead) {
+void ghiDataBinary(ofstream& fileout, DATA& data) {
+	fileout.write(reinterpret_cast<char*>(&data), sizeof(DATA));
+}
+
+void ghiDanhSachBinary(ofstream& fileout, TREE& contact) {
+	int i = 0;
+	if (contact != NULL) {
+		ghiDataBinary(fileout, contact->data);
+		ghiDanhSachBinary(fileout, contact->left);
+		ghiDanhSachBinary(fileout, contact->right);
+	}
+}
+
+void docFileBinary(ifstream& filein, TREE& contact) {
+	if (!filein) {
+		cout << "\n\t\t\tDuong dan khong hop le";
+	}
+	while (filein.eof() == false) {
+		DATA  data;
+		filein.read(reinterpret_cast<char*>(&data), sizeof(DATA));
+		contact = insertData(contact, data);
+	}
+}
+
+void Menu(TREE& contact, NODE*& pHead, ofstream& fileout, ifstream& filein) {
 	int luachon;
 	while (true) {
 		system("cls");
@@ -611,6 +577,8 @@ void Menu(TREE& contact, NODE*& pHead) {
 		cout << "\n\n\t\t6. Xuat danh sach theo nhom";
 		cout << "\n\n\t\t7. Tim thong tin theo ten";
 		cout << "\n\n\t\t8. Chinh sua thong tin danh ba";
+		cout << "\n\n\t\t9. Ghi file";
+		cout << "\n\n\t\t10. Doc file";
 		cout << "\n\n\t\t0. Ket thuc";
 		cout << "\n\n\t\t:::::::::::::::::::::::::::::::::::::::END:::::::::::::::::::::::::::::::::::::::::::::::";
 		cout << "\n\n\t\t\t Chon chuc nang: ";
@@ -688,7 +656,7 @@ void Menu(TREE& contact, NODE*& pHead) {
 			Chuyenkytu(name);
 			int leng = name.length();
 			int sl = 0;
-			SearchName(pHead, name, leng, sl);
+			//SearchName(pHead, name, leng, sl);
 			if (sl != 0)
 			{
 				NODE* tam = NULL;
@@ -713,7 +681,7 @@ void Menu(TREE& contact, NODE*& pHead) {
 			while (getchar() != '\n');
 			getline(cin, name);
 			Chuyenkytu(name);
-			Chinhsua(pHead,name);
+			//Chinhsua(pHead, name, contact);
 			NODE* tam = NULL;
 			while (pHead != NULL) {
 				tam = pHead;
@@ -721,7 +689,26 @@ void Menu(TREE& contact, NODE*& pHead) {
 				delete tam;
 			}
 			system("pause");
+			system("pause");
 			
+		}
+		else if (luachon == 9) {
+		if (!fileout) {
+			cout << "Cannot" << endl;
+		}
+		ghiDanhSachBinary(fileout, contact);
+		fileout.close();
+		cout << "\n\t\t\tDanh sach da duoc ghi vao file....\n";
+		system("pause");
+		}
+		else if (luachon == 10) {
+		if (!filein) {
+			cout << "Cannot" << endl;
+		}
+		docFileBinary(filein, contact);
+		fileout.close();
+		cout << "\n\t\t\tFile da duoc doc....";
+		system("pause");
 		}
 		else if (luachon == 0) {
 			break;
@@ -729,34 +716,14 @@ void Menu(TREE& contact, NODE*& pHead) {
 	}
 }
 
-//Doc mot thong tin
-void docData(ifstream& filein, DATA& data) {
-	getline(filein, data.ten, ',');
-	getline(filein, data.gioiTinh, ',');
-	getline(filein, data.diachi);
-	filein >> data.SDT.sdt >> data.nhom >> data.ngaysinh.day >> data.ngaysinh.month >> data.ngaysinh.year;
-}
-
-
-//Doc danh sach thong tin
-void docDanhSachData(ifstream& filein, TREE& contact) {
-	while (filein.eof() == false) {
-		DATA data;
-		docData(filein, data);
-		insertData(contact, data);
-	}
-}
 
 int main() {
 	TREE contact = NULL;
 	NODE* pHead = NULL;
-	/*ifstream filein;
-	filein.open("input.txt", ios_base::in);
-	if (filein.fail()) {
-		cout << "\n\t\t\tDuong dan khong hop le";
-		return 0;
-	}
-	docDanhSachData(filein, contact);
-	filein.close();*/
-	Menu(contact, pHead);
+	ofstream fileout;
+	fileout.open("data.dat", ios::out | ios::binary);
+	ifstream filein;
+	filein.open("data.dat", ios::in | ios::binary);
+
+	Menu(contact, pHead, fileout, filein);
 }

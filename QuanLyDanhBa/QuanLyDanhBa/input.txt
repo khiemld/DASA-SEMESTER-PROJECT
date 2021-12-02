@@ -1,6 +1,0 @@
-Duy Khiem,nam,Khanh Hoa 
-0983356102 1 2 4 2002My Huyen,nu,Hue
-0334561023 2 3 4 1998Thanh Lam,nam,Binh Dinh
-0324577623 3 5 6 2000Anh Thu,nu,Ha Noi
-0884567989 2 1 12 1999Quang Huy,nam,Gia Lai
-0886527414 3 7 8 2001
