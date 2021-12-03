@@ -359,177 +359,118 @@ void Chuyenkytu(string& s)
 			s[i] = s[i] + 32;
 	}
 }
-//void SearchName(NODE*& data, string name, int x, int& sl)
-//{
-//	if (data == NULL)
-//		return;
-//	NODE* p = data;
-//
-//	for (int i = 0; i <= p->data.ten.length()-x ; i++)
-//	{
-//		string name2 = p->data.ten.substr(i, x);//  coppy n phan tu dau cua choi
-//		Chuyenkytu(name2);
-//		if (name2.compare(name) == 0)// so sanh 2 chuoi
-//		{
-//			printDATA(p->data);
-//			sl++;
-//			break;
-//		}
-//		fflush(stdin);
-//	}
-//	fflush(stdin);
-//	SearchName(p->pNext, name, x, sl);
-//}
-//void chuyendl(NODE*& p, TREE& contact, NODE*& data)
-//{
-//	if (p->data.SDT == contact->data.SDT)
-//	{
-//		contact->data.diachi = data->data.diachi;
-//		contact->data.gioiTinh = data->data.gioiTinh;
-//		contact->data.nhom = data->data.nhom;
-//		contact->data.SDT = data->data.SDT;
-//		contact->data.ten = data->data.ten;
-//	}
-//	else
-//	{
-//		if (contact->left != NULL)
-//		{
-//			chuyendl(p, contact->left, data);
-//		}
-//		if (contact->right != NULL)
-//		{
-//			chuyendl(p, contact->right, data);
-//		}
-//	}
-//}
+void SearchName(NODE*& data, char name[], int x, int& sl)
+{
+	if (data == NULL)
+		return;
+	NODE* p = data;
+	string s = p->data.ten;
+	for (int i = 0; i <= s.length()-x ; i++)
+	{
+		string name2 = s.substr(i, x);//  coppy n phan tu dau cua choi
+		Chuyenkytu(name2);
+		if (name2.compare(name) == 0)// so sanh 2 chuoi
+		{
+			printDATA(p->data);
+			sl++;
+			break;
+		}
+		fflush(stdin);
+	}
+	fflush(stdin);
+	SearchName(p->pNext, name, x, sl);
+}
+void Chinhsua(char name[], TREE& contact)
+{
 
-//void Chinhsua(NODE*& data, string name, TREE& contact)
-//{
-//	NODE* p = data;
-//	if (data == NULL || contact == NULL)
-//		return;
-//	string name2 = data->data.ten;
-//	Chuyenkytu(name2);
-//	if (name2.compare(name) == 0)
-//	{
-//		int yeucau;
-//		while (true) {
-//			system("cls");
-//			printDATA(data->data);
-//			cout << "\n\n\t\t:::::::::::::::::CHON THONG TIN CAN CHINH SUA:::::::::::::::::::::";
-//			cout << "\n\n\t\t1. Ten";
-//			cout << "\n\n\t\t2. So dien thoai";
-//			cout << "\n\n\t\t3. Ghi chu";
-//			cout << "\n\n\t\t4. Nhom";
-//			cout << "\n\n\t\t5. Gioi tinh";
-//			cout << "\n\n\t\t6. Dia Chi";
-//			cout << "\n\n\t\t7. Ngay sinh";
-//			cout << "\n\n\t\t8. email";
-//			cout << "\n\n\t\t0. Ket thuc";
-//			cout << "\n\n\t\t\t Chon chuc nang: ";
-//			cin >> yeucau;
-//			if (yeucau == 1)
-//			{
-//				string name3;
-//				cout << "\n\n\t\tNhap Ten Moi:  ";
-//				fflush(stdin);
-//				while (getchar() != '\n');
-//				getline(cin, name3);
-//				data->data.ten = name3;
-//				//printDATA(data->data);
-//				//system("pause");
-//
-//			}
-//			else if (yeucau == 2)
-//			{
-//				int newsdt;
-//				cout << "\n\n\t\tNhap so dien thoai moi:  ";
-//				cin >> newsdt;
-//
-//				data->data.SDT.sdt = newsdt;
-//				//printDATA(data->data);
-//			//	system("pause");
-//			}
-//			else if (yeucau == 3)
-//			{
-//				string newkeep;
-//				cout << "\n\n\t\tNhap ghi chu:  ";
-//				fflush(stdin);
-//				while (getchar() != '\n');
-//				getline(cin, newkeep);
-//
-//				data->data.ghiChu = newkeep;
-//				//	printDATA(data->data);
-//				//	system("pause");
-//			}
-//			else if (yeucau == 4)
-//			{
-//				int suanhom;
-//				cout << "\t\tChon nhom: ";
-//				cout << "\n\t\t\tNhap '1' chon Gia dinh";
-//				cout << "\n\t\t\tNhap '2' chon Ban be";
-//				cout << "\n\t\t\tNhap '3' chon Cong viec";
-//				cout << "\n\t\tLua chon: ";
-//				cin >> suanhom;
-//
-//				data->data.nhom = suanhom;
-//				//	printDATA(data->data);
-//					//system("pause");
-//			}
-//			else if (yeucau == 5)
-//			{
-//				string gioitinh;
-//				cout << "\n\n\t\tNhap gioi tinh:  ";
-//				fflush(stdin);
-//				while (getchar() != '\n');
-//				getline(cin, gioitinh);
-//
-//				data->data.gioiTinh = gioitinh;
-//				//	printDATA(data->data);
-//					//system("pause");
-//			}
-//			else if (yeucau == 6)
-//			{
-//				string newdiachi;
-//				cout << "\n\n\t\tNhap dia chi:  ";
-//				fflush(stdin);
-//				while (getchar() != '\n');
-//				getline(cin, newdiachi);
-//
-//				data->data.diachi = newdiachi;
-//				//	printDATA(data->data);
-//				//	system("pause");
-//			}
-//			else if (yeucau == 7)
-//			{
-//				inputDateBirth(contact->data.ngaysinh);
-//				//	printDATA(data->data);
-//				//	system("pause");
-//			}
-//			else if (yeucau == 8) {
-//				string newmail;
-//				cout << "\n\n\t\tNhap email:  ";
-//				fflush(stdin);
-//				while (getchar() != '\n');
-//				getline(cin, newmail);
-//
-//				data->data.email = newmail;
-//				//printDATA(data->data);
-//			//	system("pause");
-//			}
-//			else if (yeucau == 0)
-//			{
-//				break;
-//			}
-//		}
-//		chuyendl(p, contact, data);
-//
-//	}
-//	else
-//	{
-//		Chinhsua(data->pNext, name, contact);
-//	}
-//}
+	if (contact == NULL)
+		return;
+	string name2 = contact->data.ten;
+	Chuyenkytu(name2);
+	if (name2.compare(name) == 0)
+	{
+		int yeucau;
+		while (true) {
+			system("cls");
+			printDATA(contact->data);
+			cout << "\n\n\t\t:::::::::::::::::CHON THONG TIN CAN CHINH SUA:::::::::::::::::::::";
+			cout << "\n\n\t\t1. Ten";
+			cout << "\n\n\t\t2. So dien thoai";
+			cout << "\n\n\t\t3. Nhom";
+			cout << "\n\n\t\t4. Gioi tinh";
+			cout << "\n\n\t\t5. Dia Chi";
+			cout << "\n\n\t\t0. Ket thuc";
+			cout << "\n\n\t\t\t Chon chuc nang: ";
+			cin >> yeucau;
+			if (yeucau == 1)
+			{
+				char name3[50];
+				cout << "\n\n\t\tNhap Ten Moi:  ";
+				fflush(stdin);
+				while (getchar() != '\n');
+				cin.getline(name3, 50);
+				int len = strlen(name3);
+				contact->data.ten[len] = name3[len];
+
+			}
+			else if (yeucau == 2)
+			{
+				int newsdt;
+				cout << "\n\n\t\tNhap so dien thoai moi:  ";
+				cin >> newsdt;
+
+				contact->data.SDT = newsdt;
+			}
+			else if (yeucau == 3)
+			{
+				int suanhom;
+				cout << "\t\tChon nhom: ";
+				cout << "\n\t\t\tNhap '1' chon Gia dinh";
+				cout << "\n\t\t\tNhap '2' chon Ban be";
+				cout << "\n\t\t\tNhap '3' chon Cong viec";
+				cout << "\n\t\tLua chon: ";
+				cin >> suanhom;
+
+				contact->data.nhom = suanhom;
+			}
+			else if (yeucau == 4)
+			{
+				char gioitinh[50];
+				cout << "\n\n\t\tNhap gioi tinh:  ";
+				fflush(stdin);
+				while (getchar() != '\n');
+				cin.getline(gioitinh, 50);
+				int len = strlen(gioitinh);
+				contact->data.gioiTinh[len] = gioitinh[len];
+			}
+			else if (yeucau == 5)
+			{
+				char newdiachi[50];
+				cout << "\n\n\t\tNhap dia chi:  ";
+				fflush(stdin);
+				while (getchar() != '\n');
+				cin.getline(newdiachi, 50);
+				int len = strlen(newdiachi);
+				contact->data.diachi[len] = newdiachi[len];
+			}
+			else if (yeucau == 0)
+			{
+				break;
+			}
+		}
+	}
+	else
+	{
+		if (contact->left != NULL)
+		{
+			Chinhsua(name, contact->left);
+		}
+		if (contact->right != NULL)
+		{
+			Chinhsua(name, contact->right);
+		}
+	}
+}
 //Hàm xuất danh sách theo nhóm
 void printGroup(TREE contact, int maNhom) {
 	if (contact != NULL) {
@@ -649,14 +590,14 @@ void Menu(TREE& contact, NODE*& pHead, ofstream& fileout, ifstream& filein) {
 			cout << "\n\t\t\tTIM KIEM THEO TEN";
 			BTStoLinkedList(contact, pHead);
 			cout << "\n\t\t\tNhap ten can tim : ";
-			string name;
+			char name[50];
 			fflush(stdin);
 			while (getchar() != '\n');
-			getline(cin, name);
-			Chuyenkytu(name);
-			int leng = name.length();
+			cin.getline(name, 50);
+			strlwr(name);
+			int leng = strlen(name);
 			int sl = 0;
-			//SearchName(pHead, name, leng, sl);
+			SearchName(pHead, name, leng, sl);
 			if (sl != 0)
 			{
 				NODE* tam = NULL;
@@ -674,21 +615,13 @@ void Menu(TREE& contact, NODE*& pHead, ofstream& fileout, ifstream& filein) {
 		}
 		else if (luachon == 8) {
 			cout << "\n\t\t\tCHINH SUA THONG TIN DANH BA";
-			BTStoLinkedList(contact, pHead);
 			cout << "\n\t\t\tNhap ten nguoi can chinh sua : ";
-			string name;
+			char name[50];
 			fflush(stdin);
 			while (getchar() != '\n');
-			getline(cin, name);
-			Chuyenkytu(name);
-			//Chinhsua(pHead, name, contact);
-			NODE* tam = NULL;
-			while (pHead != NULL) {
-				tam = pHead;
-				pHead = pHead->pNext;
-				delete tam;
-			}
-			system("pause");
+			cin.getline(name, 50);
+			strlwr(name);
+			Chinhsua(name, contact);
 			system("pause");
 			
 		}
