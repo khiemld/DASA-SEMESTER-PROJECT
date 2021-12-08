@@ -1,14 +1,15 @@
 ﻿#include<iostream>
 #include <stdio.h>
 #include <string>
+#include<string.h>
 #include<fstream>
 #include<string.h>
 #include<algorithm>
+#pragma warning(disable : 4996)
 using namespace std;
 
 struct DATA {
 	int SDT;
-
 	char ten[50];
 	int nhom; //1: Gia dinh, 2: Ban be, 3: Cong viec
 	char gioiTinh[50];
@@ -28,10 +29,24 @@ struct CONTACT { //Cây nhị phân tìm kiếm
 };
 typedef CONTACT* TREE;
 
+//Hàm kiểm tra số điện thoại hợp lệ
+bool ktraSoDienThoai(string sdt) {
+	if (sdt.length() != 10) {
+		return false;
+	}
+	for (int i = 0; i < sdt.length(); i++) {
+		if (sdt[i] <= '9' && sdt[i] >= '0')
+			continue;
+		else
+			return false;
+	}
+}
+
 //Hàm nhập thông tin DATA
 void inputDATA(DATA& x) {
 	cout << "\t\tNhap so dien thoai: ";
 	cin >> x.SDT;
+	
 	while (getchar() != '\n');
 	cout << "\t\tNhap ten: ";
 	cin.getline(x.ten, 50);
@@ -529,7 +544,14 @@ void Menu(TREE& contact, NODE*& pHead, ofstream& fileout, ifstream& filein) {
 			cout << "\n\t\t\tTHEM THONG TIN SO DIEN THOAI\n";
 			DATA data;
 			inputDATA(data);
-			contact = insertData(contact, data);
+			if (kiemTraTonTai(contact, data.SDT)) {
+				cout << "\n\t\tSo dien thoai da ton tai. Vui long kiem tra lai!\n";
+			}
+			else { 
+				contact = insertData(contact, data); 
+				cout << "\n\t\tThong tin da duoc them....\n";
+			}
+			system("pause");
 		}
 		else if (luachon == 2) {
 			cout << "\n\t\t\tXOA THONG TIN SO DIEN THOAI\n\n";
@@ -626,8 +648,10 @@ void Menu(TREE& contact, NODE*& pHead, ofstream& fileout, ifstream& filein) {
 			
 		}
 		else if (luachon == 9) {
+		fileout.open("data.dat", ios::out | ios::binary);
+		
 		if (!fileout) {
-			cout << "Cannot" << endl;
+			cout << "Khong the ghi file. Vui long kiem tra lai!" << endl;
 		}
 		ghiDanhSachBinary(fileout, contact);
 		fileout.close();
@@ -636,11 +660,11 @@ void Menu(TREE& contact, NODE*& pHead, ofstream& fileout, ifstream& filein) {
 		}
 		else if (luachon == 10) {
 		if (!filein) {
-			cout << "Cannot" << endl;
+			cout << "Khong the doc file. Vui long kiem tra lai!" << endl;
 		}
 		docFileBinary(filein, contact);
 		fileout.close();
-		cout << "\n\t\t\tFile da duoc doc....";
+		cout << "\n\t\t\tDanh sach da duoc doc....\n";
 		system("pause");
 		}
 		else if (luachon == 0) {
@@ -653,9 +677,8 @@ void Menu(TREE& contact, NODE*& pHead, ofstream& fileout, ifstream& filein) {
 int main() {
 	TREE contact = NULL;
 	NODE* pHead = NULL;
-	ofstream fileout;
-	fileout.open("data.dat", ios::out | ios::binary);
 	ifstream filein;
+	ofstream fileout;
 	filein.open("data.dat", ios::in | ios::binary);
 
 	Menu(contact, pHead, fileout, filein);
