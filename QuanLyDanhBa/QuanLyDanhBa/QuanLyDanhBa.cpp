@@ -5,6 +5,7 @@
 #include<fstream>
 #include<string.h>
 #include<algorithm>
+#include<stdlib.h>
 #pragma warning(disable : 4996)
 using namespace std;
 
@@ -380,6 +381,11 @@ void SearchName(NODE*& data, char name[], int x, int& sl)
 		return;
 	NODE* p = data;
 	string s = p->data.ten;
+	if (s.length() < strlen(name))
+	{
+		SearchName(p->pNext, name, x, sl);
+		return;
+	}
 	for (int i = 0; i <= s.length()-x ; i++)
 	{
 		string name2 = s.substr(i, x);//  coppy n phan tu dau cua choi
@@ -395,7 +401,7 @@ void SearchName(NODE*& data, char name[], int x, int& sl)
 	fflush(stdin);
 	SearchName(p->pNext, name, x, sl);
 }
-void Chinhsua(char name[], TREE& contact)
+void Chinhsua(char name[], TREE& contact,int &sl)
 {
 
 	if (contact == NULL)
@@ -404,6 +410,7 @@ void Chinhsua(char name[], TREE& contact)
 	Chuyenkytu(name2);
 	if (name2.compare(name) == 0)
 	{
+		sl++;
 		int yeucau;
 		while (true) {
 			system("cls");
@@ -424,8 +431,7 @@ void Chinhsua(char name[], TREE& contact)
 				fflush(stdin);
 				while (getchar() != '\n');
 				cin.getline(name3, 50);
-				int len = strlen(name3);
-				contact->data.ten[len] = name3[len];
+				strcpy(contact->data.ten, name3);
 
 			}
 			else if (yeucau == 2)
@@ -455,8 +461,7 @@ void Chinhsua(char name[], TREE& contact)
 				fflush(stdin);
 				while (getchar() != '\n');
 				cin.getline(gioitinh, 50);
-				int len = strlen(gioitinh);
-				contact->data.gioiTinh[len] = gioitinh[len];
+				strcpy(contact->data.gioiTinh, gioitinh);
 			}
 			else if (yeucau == 5)
 			{
@@ -465,8 +470,7 @@ void Chinhsua(char name[], TREE& contact)
 				fflush(stdin);
 				while (getchar() != '\n');
 				cin.getline(newdiachi, 50);
-				int len = strlen(newdiachi);
-				contact->data.diachi[len] = newdiachi[len];
+				strcpy(contact->data.diachi, newdiachi);
 			}
 			else if (yeucau == 0)
 			{
@@ -478,11 +482,11 @@ void Chinhsua(char name[], TREE& contact)
 	{
 		if (contact->left != NULL)
 		{
-			Chinhsua(name, contact->left);
+			Chinhsua(name, contact->left,sl);
 		}
 		if (contact->right != NULL)
 		{
-			Chinhsua(name, contact->right);
+			Chinhsua(name, contact->right, sl);
 		}
 	}
 }
@@ -643,7 +647,12 @@ void Menu(TREE& contact, NODE*& pHead, ofstream& fileout, ifstream& filein) {
 			while (getchar() != '\n');
 			cin.getline(name, 50);
 			strlwr(name);
-			Chinhsua(name, contact);
+			int sl = 0;
+			Chinhsua(name, contact,sl);
+			if (sl == 0)
+			{
+				cout << "\n\t\tKhong tim thay ten\n\n";
+			}
 			system("pause");
 			
 		}
