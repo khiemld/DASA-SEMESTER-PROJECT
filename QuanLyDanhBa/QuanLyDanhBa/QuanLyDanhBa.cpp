@@ -21,7 +21,7 @@ struct NODE {
 	NODE* pNext;
 };
 
-struct CONTACT { //Cây nhị phân tìm kiếm
+struct CONTACT { //NODE trên cây nhị phân tìm kiếm
 	DATA data;
 	CONTACT* right;
 	CONTACT* left;
