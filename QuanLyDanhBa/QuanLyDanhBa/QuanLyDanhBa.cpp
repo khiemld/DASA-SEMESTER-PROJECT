@@ -5,6 +5,7 @@
 #include<fstream>
 #include<string.h>
 #include<algorithm>
+#include<stdlib.h>
 #pragma warning(disable : 4996)
 using namespace std;
 
@@ -21,7 +22,7 @@ struct NODE {
 	NODE* pNext;
 };
 
-struct CONTACT { //NODE trên cây nhị phân tìm kiếm
+struct CONTACT { //Cây nhị phân tìm kiếm
 	DATA data;
 	CONTACT* right;
 	CONTACT* left;
@@ -42,11 +43,16 @@ bool ktraSoDienThoai(string sdt) {
 	}
 }
 
+bool ktNhapSDT(int sdt) {
+	if (sdt > 0 && sdt < 9999999999)
+		return true;
+	return false;
+}
+
 //Hàm nhập thông tin DATA
 void inputDATA(DATA& x) {
 	cout << "\t\tNhap so dien thoai: ";
 	cin >> x.SDT;
-	
 	while (getchar() != '\n');
 	cout << "\t\tNhap ten: ";
 	cin.getline(x.ten, 50);
@@ -103,7 +109,7 @@ CONTACT* newNode(DATA key)
 	node->data = key;
 	node->left = NULL;
 	node->right = NULL;
-	node->height = 1; 
+	node->height = 1;
 	return(node);
 }
 
@@ -174,7 +180,7 @@ CONTACT* insertData(TREE& contact, DATA data) {
 	else if (contact->data.SDT > data.SDT) {
 		contact->left = insertData(contact->left, data);
 	}
-	
+
 	//Cập nhật lại hệ số cân bằng và cây cân bằng
 	contact->height = 1 + max(height(contact->left), height(contact->right));
 	int balance = balanceFactor(contact);
@@ -263,8 +269,6 @@ CONTACT* find_minValue(CONTACT* node) {
 }
 
 CONTACT* deleteContact(TREE& contact, int sdtData) {
-	if (contact == NULL)
-		return contact;
 	if (sdtData < contact->data.SDT)
 		contact->left = deleteContact(contact->left, sdtData);
 	else if (sdtData > contact->data.SDT)
@@ -286,7 +290,6 @@ CONTACT* deleteContact(TREE& contact, int sdtData) {
 			contact->right = deleteContact(contact->right, temp->data.SDT);
 		}
 	}
-
 	if (contact == NULL)
 		return contact;
 	// Cập nhật hệ số cân bằng
@@ -309,8 +312,6 @@ CONTACT* deleteContact(TREE& contact, int sdtData) {
 		return leftRotate(contact);
 	}
 	return contact;
-
-		
 }
 
 void XuatDanhBaTheoTen(NODE* pHead) {
@@ -380,7 +381,12 @@ void SearchName(NODE*& data, char name[], int x, int& sl)
 		return;
 	NODE* p = data;
 	string s = p->data.ten;
-	for (int i = 0; i <= s.length()-x ; i++)
+	if (s.length() < strlen(name))
+	{
+		SearchName(p->pNext, name, x, sl);
+		return;
+	}
+	for (int i = 0; i <= s.length() - x; i++)
 	{
 		string name2 = s.substr(i, x);//  coppy n phan tu dau cua choi
 		Chuyenkytu(name2);
@@ -395,7 +401,7 @@ void SearchName(NODE*& data, char name[], int x, int& sl)
 	fflush(stdin);
 	SearchName(p->pNext, name, x, sl);
 }
-void Chinhsua(char name[], TREE& contact)
+void Chinhsua(char name[], TREE& contact, int& sl)
 {
 
 	if (contact == NULL)
@@ -404,6 +410,7 @@ void Chinhsua(char name[], TREE& contact)
 	Chuyenkytu(name2);
 	if (name2.compare(name) == 0)
 	{
+		sl++;
 		int yeucau;
 		while (true) {
 			system("cls");
@@ -424,8 +431,7 @@ void Chinhsua(char name[], TREE& contact)
 				fflush(stdin);
 				while (getchar() != '\n');
 				cin.getline(name3, 50);
-				int len = strlen(name3);
-				contact->data.ten[len] = name3[len];
+				strcpy(contact->data.ten, name3);
 
 			}
 			else if (yeucau == 2)
@@ -455,8 +461,7 @@ void Chinhsua(char name[], TREE& contact)
 				fflush(stdin);
 				while (getchar() != '\n');
 				cin.getline(gioitinh, 50);
-				int len = strlen(gioitinh);
-				contact->data.gioiTinh[len] = gioitinh[len];
+				strcpy(contact->data.gioiTinh, gioitinh);
 			}
 			else if (yeucau == 5)
 			{
@@ -465,8 +470,7 @@ void Chinhsua(char name[], TREE& contact)
 				fflush(stdin);
 				while (getchar() != '\n');
 				cin.getline(newdiachi, 50);
-				int len = strlen(newdiachi);
-				contact->data.diachi[len] = newdiachi[len];
+				strcpy(contact->data.diachi, newdiachi);
 			}
 			else if (yeucau == 0)
 			{
@@ -478,11 +482,11 @@ void Chinhsua(char name[], TREE& contact)
 	{
 		if (contact->left != NULL)
 		{
-			Chinhsua(name, contact->left);
+			Chinhsua(name, contact->left, sl);
 		}
 		if (contact->right != NULL)
 		{
-			Chinhsua(name, contact->right);
+			Chinhsua(name, contact->right, sl);
 		}
 	}
 }
@@ -547,8 +551,8 @@ void Menu(TREE& contact, NODE*& pHead, ofstream& fileout, ifstream& filein) {
 			if (kiemTraTonTai(contact, data.SDT)) {
 				cout << "\n\t\tSo dien thoai da ton tai. Vui long kiem tra lai!\n";
 			}
-			else { 
-				contact = insertData(contact, data); 
+			else {
+				contact = insertData(contact, data);
 				cout << "\n\t\tThong tin da duoc them....\n";
 			}
 			system("pause");
@@ -643,29 +647,34 @@ void Menu(TREE& contact, NODE*& pHead, ofstream& fileout, ifstream& filein) {
 			while (getchar() != '\n');
 			cin.getline(name, 50);
 			strlwr(name);
-			Chinhsua(name, contact);
+			int sl = 0;
+			Chinhsua(name, contact, sl);
+			if (sl == 0)
+			{
+				cout << "\n\t\tKhong tim thay ten\n\n";
+			}
 			system("pause");
-			
+
 		}
 		else if (luachon == 9) {
-		fileout.open("data.dat", ios::out | ios::binary);
-		
-		if (!fileout) {
-			cout << "Khong the ghi file. Vui long kiem tra lai!" << endl;
-		}
-		ghiDanhSachBinary(fileout, contact);
-		fileout.close();
-		cout << "\n\t\t\tDanh sach da duoc ghi vao file....\n";
-		system("pause");
+		     fileout.open("data.dat", ios::out | ios::binary);
+			if (!fileout) {
+				cout << "Khong the ghi file. Vui long kiem tra lai!" << endl;
+			}
+			ghiDanhSachBinary(fileout, contact);
+			fileout.close();
+			cout << "\n\t\t\tDanh sach da duoc ghi vao file....\n";
+			system("pause");
 		}
 		else if (luachon == 10) {
-		if (!filein) {
-			cout << "Khong the doc file. Vui long kiem tra lai!" << endl;
-		}
-		docFileBinary(filein, contact);
-		fileout.close();
-		cout << "\n\t\t\tDanh sach da duoc doc....\n";
-		system("pause");
+		    filein.open("data.dat", ios::in | ios::binary);
+			if (!filein) {
+				cout << "Khong the doc file. Vui long kiem tra lai!" << endl;
+			}
+			docFileBinary(filein, contact);
+			fileout.close();
+			cout << "\n\t\t\tDanh sach da duoc doc....\n";
+			system("pause");
 		}
 		else if (luachon == 0) {
 			break;
@@ -679,7 +688,7 @@ int main() {
 	NODE* pHead = NULL;
 	ifstream filein;
 	ofstream fileout;
-	filein.open("data.dat", ios::in | ios::binary);
-
+	
+	
 	Menu(contact, pHead, fileout, filein);
 }
