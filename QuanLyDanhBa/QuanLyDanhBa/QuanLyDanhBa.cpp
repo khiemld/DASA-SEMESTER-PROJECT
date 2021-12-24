@@ -672,7 +672,7 @@ void Menu(TREE& contact, NODE*& pHead, ofstream& fileout, ifstream& filein) {
 				cout << "Khong the doc file. Vui long kiem tra lai!" << endl;
 			}
 			docFileBinary(filein, contact);
-			fileout.close();
+			filein.close();
 			cout << "\n\t\t\tDanh sach da duoc doc....\n";
 			system("pause");
 		}
