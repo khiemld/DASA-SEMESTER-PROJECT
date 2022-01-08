@@ -6,6 +6,7 @@
 #include<string.h>
 #include<algorithm>
 #include<stdlib.h>
+#include<time.h>
 #pragma warning(disable : 4996)
 using namespace std;
 
@@ -30,28 +31,10 @@ struct CONTACT { //Cây nhị phân tìm kiếm
 };
 typedef CONTACT* TREE;
 
-//Hàm kiểm tra số điện thoại hợp lệ
-bool ktraSoDienThoai(string sdt) {
-	if (sdt.length() != 10) {
-		return false;
-	}
-	for (int i = 0; i < sdt.length(); i++) {
-		if (sdt[i] <= '9' && sdt[i] >= '0')
-			continue;
-		else
-			return false;
-	}
-}
-
-bool ktNhapSDT(int sdt) {
-	if (sdt > 0 && sdt < 9999999999)
-		return true;
-	return false;
-}
 
 //Hàm nhập thông tin DATA
 void inputDATA(DATA& x) {
-	cout << "\t\tNhap so dien thoai: ";
+	cout << "\t\tNhap so dien thoai (khong qua 10 chu so): ";
 	cin >> x.SDT;
 	while (getchar() != '\n');
 	cout << "\t\tNhap ten: ";
@@ -60,13 +43,15 @@ void inputDATA(DATA& x) {
 	cin.getline(x.gioiTinh, 50);
 	cout << "\t\tDia chi: ";
 	cin.getline(x.diachi, 50);
-	//inputDateBirth(x.ngaysinh);
-	cout << "\t\tChon nhom";
-	cout << "\n\t\t\tNhap '1' chon Gia dinh";
-	cout << "\n\t\t\tNhap '2' chon Ban be";
-	cout << "\n\t\t\tNhap '3' chon Cong viec";
-	cout << "\n\t\tLua chon: ";
-	cin >> x.nhom;
+	do {
+		cout << "\t\tChon nhom";
+		cout << "\n\t\t\tNhap '1' chon Gia dinh";
+		cout << "\n\t\t\tNhap '2' chon Ban be";
+		cout << "\n\t\t\tNhap '3' chon Cong viec";
+		cout << "\n\t\tLua chon: ";
+		cin >> x.nhom;
+	} while (x.nhom < 1 || x.nhom > 3);
+
 }
 
 //Khỏi tạo Node
@@ -130,17 +115,16 @@ CONTACT* rightRotate(CONTACT* y)
 	CONTACT* x = y->left;
 	CONTACT* T2 = x->right;
 
-	// Perform rotation
+	// Thực hiện phép xoay
 	x->right = y;
 	y->left = T2;
 
-	// Update heights
+	//Cập nhật lại chiều cao
 	y->height = max(height(y->left),
 		height(y->right)) + 1;
 	x->height = max(height(x->left),
 		height(x->right)) + 1;
 
-	// Return new root
 	return x;
 }
 //Xoay trái
@@ -149,17 +133,16 @@ CONTACT* leftRotate(CONTACT* x)
 	CONTACT* y = x->right;
 	CONTACT* T2 = y->left;
 
-	// Perform rotation
+	// Thực hiện phép xoay
 	y->left = x;
 	x->right = T2;
 
-	// Update heights
+	// Cập nhật lại chiều cao
 	x->height = max(height(x->left),
 		height(x->right)) + 1;
 	y->height = max(height(y->left),
 		height(y->right)) + 1;
 
-	// Return new root
 	return y;
 }
 
@@ -220,7 +203,7 @@ void printDATA(DATA data) {
 	else if (data.nhom == 2) {
 		cout << "\n\t\tNhom: Ban be";
 	}
-	else if (data.nhom == 3) {
+	else {
 		cout << "\n\t\tNhom: Cong viec";
 	}
 	cout << "\n";
@@ -333,37 +316,36 @@ void XuatDanhBaTheoTen(NODE* pHead) {
 	}
 }
 
-
+bool soSanhTungSo(string data, string Contact) {
+	int count = 0;
+	for (int i = 0; i < data.size(); i++) {
+		if (data[i] == Contact[i])
+			count++;
+	}
+	if (count == data.size()) {
+		return true;
+	}
+	return false;
+}
 void searchPhoneNumber(TREE& contact, int sdtData, bool& flat)
 {
 	if (contact != NULL) {
-		string data = to_string(sdtData); // Convert số nhập vào sang kiểu string
-		string Contact = to_string(contact->data.SDT); //Convert số trong cây nhị phân sang kiểu string
-
+		string data = to_string(sdtData);
+		string Contact = to_string(contact->data.SDT);
 		if (data == Contact)
 		{
-			printDATA(contact->data); // Nếu số nhập vào trùng thì in thông tin danh bạ
+			printDATA(contact->data);
 			flat = 1;
+			return;
 		}
 		else {
-			int m = data.size();
-			int n = Contact.size();
-			int count = 0;
-
-			for (int i = 0; i < m; i++) {
-				if (data[i] == Contact[i]) //Nếu từng chữ số nhập vào trùng với các chữ số trong cây nhị phân
-					count++; //  thì ta tăng biến đếm
-
-				if (count == data.size()) // Nếu biến đếm trùng với kích thước của số nhập vào
-				{
-					printDATA(contact->data); // thì ta in thông tin danh bạ
-					flat = 1;
-				}
-
+			if (soSanhTungSo(data, Contact) == true) {
+				printDATA(contact->data);
+				flat = 1;
 			}
 		}
-		searchPhoneNumber(contact->left, sdtData, flat); // Tiếp tục tìm kiếm các số trùng với số nhập vào ở bên trái
-		searchPhoneNumber(contact->right, sdtData, flat); // và ở bên phải	
+		searchPhoneNumber(contact->left, sdtData, flat);
+		searchPhoneNumber(contact->right, sdtData, flat);
 	}
 
 }
@@ -505,18 +487,17 @@ void ghiDataBinary(ofstream& fileout, DATA& data) {
 }
 
 void ghiDanhSachBinary(ofstream& fileout, TREE& contact) {
-	int i = 0;
 	if (contact != NULL) {
 		ghiDataBinary(fileout, contact->data);
 		ghiDanhSachBinary(fileout, contact->left);
 		ghiDanhSachBinary(fileout, contact->right);
 	}
+	else {
+		return;
+	}
 }
 
 void docFileBinary(ifstream& filein, TREE& contact) {
-	if (!filein) {
-		cout << "\n\t\t\tDuong dan khong hop le";
-	}
 	while (filein.eof() == false) {
 		DATA  data;
 		filein.read(reinterpret_cast<char*>(&data), sizeof(DATA));
@@ -657,24 +638,28 @@ void Menu(TREE& contact, NODE*& pHead, ofstream& fileout, ifstream& filein) {
 
 		}
 		else if (luachon == 9) {
-		     fileout.open("data.dat", ios::out | ios::binary);
+			fileout.open("data.dat", ios::out | ios::binary);
 			if (!fileout) {
 				cout << "Khong the ghi file. Vui long kiem tra lai!" << endl;
 			}
-			ghiDanhSachBinary(fileout, contact);
-			fileout.close();
-			cout << "\n\t\t\tDanh sach da duoc ghi vao file....\n";
-			system("pause");
+			else {
+				ghiDanhSachBinary(fileout, contact);
+				fileout.close();
+				cout << "\n\t\t\tDanh sach da duoc ghi vao file....\n";
+				system("pause");
+			}
 		}
 		else if (luachon == 10) {
-		    filein.open("data.dat", ios::in | ios::binary);
+			filein.open("data.dat", ios::in | ios::binary);
 			if (!filein) {
 				cout << "Khong the doc file. Vui long kiem tra lai!" << endl;
 			}
-			docFileBinary(filein, contact);
-			filein.close();
-			cout << "\n\t\t\tDanh sach da duoc doc....\n";
-			system("pause");
+			else {
+				docFileBinary(filein, contact);
+				filein.close();
+				cout << "\n\t\t\tDanh sach da duoc doc....\n";
+				system("pause");
+			}
 		}
 		else if (luachon == 0) {
 			break;
@@ -688,7 +673,7 @@ int main() {
 	NODE* pHead = NULL;
 	ifstream filein;
 	ofstream fileout;
-	
-	
+
+
 	Menu(contact, pHead, fileout, filein);
 }
